@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BumpRadar — Is It Safe for Your Bump?</title>
-    <meta name="description" content="AI-powered ingredient safety checker for pregnancy. Paste your product's ingredients and instantly know what's safe.">
+    <meta name="description" content="AI-powered ingredient safety checker for pregnancy. Scan barcodes, snap photos, or paste ingredients.">
     <meta property="og:title" content="BumpRadar — Pregnancy Ingredient Safety Checker">
-    <meta property="og:description" content="Scan any product's ingredients to check if they're safe during pregnancy. Free, instant, AI-powered.">
+    <meta property="og:description" content="Scan any product to check if it's safe during pregnancy. Barcode, photo, or text. Free & instant.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bumpradar.app">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,11 +36,7 @@
             --radius: 16px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -76,17 +72,44 @@
             letter-spacing: -0.5px;
         }
 
-        .logo-icon {
-            font-size: 28px;
-            margin-right: 4px;
+        .logo-icon { font-size: 28px; margin-right: 4px; }
+        .tagline { color: var(--text-muted); font-size: 15px; margin-top: 4px; font-weight: 500; }
+
+        /* Scan Mode Tabs */
+        .scan-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--border);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
         }
 
-        .tagline {
+        .scan-tab {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
             color: var(--text-muted);
-            font-size: 15px;
-            margin-top: 4px;
-            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
         }
+
+        .scan-tab.active {
+            background: var(--card);
+            color: var(--text);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .scan-tab-icon { font-size: 20px; }
 
         /* Input Section */
         .input-section {
@@ -98,20 +121,11 @@
             margin-bottom: 16px;
         }
 
-        .input-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 10px;
-            display: block;
-        }
+        .scan-panel { display: none; }
+        .scan-panel.active { display: block; }
 
-        .input-hint {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
+        .input-label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 10px; display: block; }
+        .input-hint { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; }
 
         textarea {
             width: 100%;
@@ -128,16 +142,107 @@
             color: var(--text);
         }
 
-        textarea:focus {
-            outline: none;
+        textarea:focus { outline: none; border-color: var(--accent); background: white; }
+        textarea::placeholder { color: #9ca3af; }
+
+        /* Barcode input */
+        .barcode-input {
+            width: 100%;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 2px;
+            transition: border-color 0.2s;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .barcode-input:focus { outline: none; border-color: var(--accent); background: white; }
+        .barcode-input::placeholder { color: #9ca3af; font-weight: 400; letter-spacing: 0; font-size: 15px; }
+
+        /* Photo upload area */
+        .photo-upload {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg);
+            position: relative;
+        }
+
+        .photo-upload:hover, .photo-upload.dragover {
             border-color: var(--accent);
-            background: white;
+            background: var(--accent-light);
         }
 
-        textarea::placeholder {
-            color: #9ca3af;
+        .photo-upload-icon { font-size: 48px; margin-bottom: 12px; display: block; }
+        .photo-upload-text { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .photo-upload-hint { font-size: 13px; color: var(--text-muted); }
+
+        .photo-upload input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
         }
 
+        .photo-preview {
+            display: none;
+            position: relative;
+            margin-top: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: #f3f4f6;
+        }
+
+        .photo-preview-remove {
+            position: absolute;
+            top: 8px; right: 8px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px; height: 32px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Camera button */
+        .camera-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 10px 20px;
+            background: var(--accent-light);
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .camera-btn:hover { background: var(--accent); color: white; }
+
+        /* Scan button */
         .scan-btn {
             width: 100%;
             padding: 16px;
@@ -156,55 +261,27 @@
             overflow: hidden;
         }
 
-        .scan-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
-        }
-
-        .scan-btn:active {
-            transform: translateY(0);
-        }
-
-        .scan-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .scan-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4); }
+        .scan-btn:active { transform: translateY(0); }
+        .scan-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .scan-btn.loading::after {
             content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
+            position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             animation: shimmer 1.5s infinite;
         }
 
-        @keyframes shimmer {
-            100% { left: 100%; }
-        }
+        @keyframes shimmer { 100% { left: 100%; } }
 
         /* Results */
-        .results {
-            display: none;
-            animation: slideUp 0.4s ease-out;
-        }
-
-        .results.visible {
-            display: block;
-        }
+        .results { display: none; animation: slideUp 0.4s ease-out; }
+        .results.visible { display: block; }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Verdict Card */
@@ -218,38 +295,16 @@
             overflow: hidden;
         }
 
-        .verdict-card.safe {
-            background: var(--safe-bg);
-            border-color: var(--safe-border);
-        }
+        .verdict-card.safe { background: var(--safe-bg); border-color: var(--safe-border); }
+        .verdict-card.caution { background: var(--caution-bg); border-color: var(--caution-border); }
+        .verdict-card.avoid { background: var(--avoid-bg); border-color: var(--avoid-border); }
+        .verdict-card.unknown { background: var(--unknown-bg); border-color: var(--unknown-border); }
 
-        .verdict-card.caution {
-            background: var(--caution-bg);
-            border-color: var(--caution-border);
-        }
-
-        .verdict-card.avoid {
-            background: var(--avoid-bg);
-            border-color: var(--avoid-border);
-        }
-
-        .verdict-card.unknown {
-            background: var(--unknown-bg);
-            border-color: var(--unknown-border);
-        }
-
-        .verdict-emoji {
-            font-size: 56px;
-            margin-bottom: 12px;
-            display: block;
-        }
+        .verdict-emoji { font-size: 56px; margin-bottom: 12px; display: block; }
 
         .verdict-label {
-            font-size: 24px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            font-size: 24px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 8px;
         }
 
         .verdict-card.safe .verdict-label { color: #16a34a; }
@@ -257,319 +312,215 @@
         .verdict-card.avoid .verdict-label { color: #dc2626; }
         .verdict-card.unknown .verdict-label { color: #7c3aed; }
 
-        .verdict-message {
-            font-size: 15px;
-            color: var(--text-muted);
-            line-height: 1.5;
+        .verdict-message { font-size: 15px; color: var(--text-muted); line-height: 1.5; }
+
+        .product-info {
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 10px;
         }
+
+        .product-name { font-size: 17px; font-weight: 700; }
+        .product-brand { font-size: 14px; color: var(--text-muted); }
 
         .verdict-stats {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(0,0,0,0.08);
+            display: flex; justify-content: center; gap: 24px;
+            margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.08);
         }
 
-        .stat {
-            text-align: center;
-        }
+        .stat { text-align: center; }
+        .stat-number { font-size: 22px; font-weight: 800; }
+        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
 
-        .stat-number {
-            font-size: 22px;
-            font-weight: 800;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        /* Watermark for screenshots */
-        .verdict-watermark {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 16px;
-            font-weight: 600;
-            opacity: 0.6;
-        }
+        .verdict-watermark { font-size: 12px; color: var(--text-muted); margin-top: 16px; font-weight: 600; opacity: 0.6; }
 
         /* Flagged Ingredients */
         .flagged-section {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-            border: 1px solid var(--border);
-            margin-bottom: 16px;
+            background: var(--card); border-radius: var(--radius); padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid var(--border); margin-bottom: 16px;
         }
 
-        .flagged-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .flagged-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 
-        .flagged-item {
-            padding: 14px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border-left: 4px solid;
-        }
+        .flagged-item { padding: 14px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid; }
+        .flagged-item.avoid { background: var(--avoid-bg); border-left-color: var(--avoid); }
+        .flagged-item.caution { background: var(--caution-bg); border-left-color: var(--caution); }
+        .flagged-item.unknown { background: var(--unknown-bg); border-left-color: var(--unknown); }
 
-        .flagged-item.avoid {
-            background: var(--avoid-bg);
-            border-left-color: var(--avoid);
-        }
-
-        .flagged-item.caution {
-            background: var(--caution-bg);
-            border-left-color: var(--caution);
-        }
-
-        .flagged-item.unknown {
-            background: var(--unknown-bg);
-            border-left-color: var(--unknown);
-        }
-
-        .flagged-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .flagged-name {
-            font-weight: 700;
-            font-size: 15px;
-        }
+        .flagged-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .flagged-name { font-weight: 700; font-size: 15px; }
 
         .flagged-badge {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 3px 8px;
-            border-radius: 6px;
-            letter-spacing: 0.5px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px;
         }
 
-        .flagged-badge.avoid {
-            background: var(--avoid);
-            color: white;
-        }
+        .flagged-badge.avoid { background: var(--avoid); color: white; }
+        .flagged-badge.caution { background: var(--caution); color: white; }
+        .flagged-badge.unknown { background: var(--unknown); color: white; }
 
-        .flagged-badge.caution {
-            background: var(--caution);
-            color: white;
-        }
-
-        .flagged-badge.unknown {
-            background: var(--unknown);
-            color: white;
-        }
-
-        .flagged-reason {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.5;
-            margin-top: 4px;
-        }
-
-        .flagged-alternative {
-            font-size: 13px;
-            color: var(--safe);
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
-        .flagged-alternative::before {
-            content: '✅ Try instead: ';
-        }
+        .flagged-reason { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-top: 4px; }
+        .flagged-alternative { font-size: 13px; color: var(--safe); font-weight: 600; margin-top: 6px; }
+        .flagged-alternative::before { content: '✅ Try instead: '; }
 
         /* Safe list */
         .safe-section {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-            border: 1px solid var(--border);
-            margin-bottom: 16px;
+            background: var(--card); border-radius: var(--radius); padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid var(--border); margin-bottom: 16px;
         }
 
-        .safe-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #16a34a;
-        }
-
-        .safe-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+        .safe-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #16a34a; }
+        .safe-list { display: flex; flex-wrap: wrap; gap: 8px; }
 
         .safe-chip {
-            background: var(--safe-bg);
-            color: #16a34a;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
+            background: var(--safe-bg); color: #16a34a;
+            padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;
             border: 1px solid var(--safe-border);
         }
 
         /* Disclaimer */
         .disclaimer {
-            text-align: center;
-            padding: 20px;
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.6;
+            text-align: center; padding: 20px; font-size: 12px;
+            color: var(--text-muted); line-height: 1.6;
         }
+        .disclaimer a { color: var(--accent); text-decoration: none; }
 
-        .disclaimer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        /* Share button */
+        /* Action buttons */
         .share-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--card);
-            color: var(--text);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 16px;
-            font-family: 'Inter', sans-serif;
+            width: 100%; padding: 14px; background: var(--card); color: var(--text);
+            border: 2px solid var(--border); border-radius: 12px; font-size: 15px;
+            font-weight: 600; cursor: pointer; margin-bottom: 16px; font-family: 'Inter', sans-serif;
             transition: all 0.2s;
         }
+        .share-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-        .share-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        /* Scan again */
         .scan-again-btn {
-            width: 100%;
-            padding: 14px;
-            background: transparent;
-            color: var(--accent);
-            border: 2px solid var(--accent);
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-bottom: 16px;
-            font-family: 'Inter', sans-serif;
+            width: 100%; padding: 14px; background: transparent; color: var(--accent);
+            border: 2px solid var(--accent); border-radius: 12px; font-size: 15px;
+            font-weight: 700; cursor: pointer; margin-bottom: 16px; font-family: 'Inter', sans-serif;
             transition: all 0.2s;
         }
+        .scan-again-btn:hover { background: var(--accent-light); }
 
-        .scan-again-btn:hover {
-            background: var(--accent-light);
-        }
-
-        /* Error state */
         .error-msg {
-            background: var(--avoid-bg);
-            border: 1px solid var(--avoid-border);
-            color: #dc2626;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 16px;
-            display: none;
-            font-weight: 500;
+            background: var(--avoid-bg); border: 1px solid var(--avoid-border); color: #dc2626;
+            padding: 14px; border-radius: 12px; font-size: 14px; text-align: center;
+            margin-bottom: 16px; display: none; font-weight: 500;
         }
+        .error-msg.visible { display: block; }
 
-        .error-msg.visible {
-            display: block;
-        }
-
-        /* Example buttons */
-        .examples {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
+        .examples { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 
         .example-btn {
-            background: var(--accent-light);
-            color: var(--accent);
-            border: none;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
+            background: var(--accent-light); color: var(--accent); border: none;
+            padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+            cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
         }
+        .example-btn:hover { background: var(--accent); color: white; }
 
-        .example-btn:hover {
-            background: var(--accent);
-            color: white;
+        /* Scan counter */
+        .scan-counter {
+            text-align: center; padding: 10px; font-size: 13px;
+            color: var(--text-muted); font-weight: 500;
         }
+        .scan-counter .scans-left { font-weight: 700; color: var(--accent); }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 16px 0;
-            margin-top: auto;
+        /* Premium banner */
+        .premium-banner {
+            background: linear-gradient(135deg, #fef3c7, #fce7f3);
+            border: 2px solid #fcd34d;
+            border-radius: var(--radius); padding: 24px; text-align: center;
+            margin-bottom: 16px;
         }
+        .premium-icon { font-size: 40px; margin-bottom: 8px; }
+        .premium-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+        .premium-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; }
+        .premium-price { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 14px; }
+        .premium-btn {
+            padding: 14px 32px; background: linear-gradient(135deg, var(--accent), #d946ef);
+            color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700;
+            cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+        }
+        .premium-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(236,72,153,0.4); }
 
-        .footer-text {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        /* Animations */
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+        .footer { text-align: center; padding: 16px 0; margin-top: auto; }
+        .footer-text { font-size: 12px; color: var(--text-muted); }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header class="header">
             <div class="logo"><span class="logo-icon">📡</span>BumpRadar</div>
             <p class="tagline">Is it safe for your bump? Find out instantly.</p>
         </header>
 
+        <!-- Scan Mode Tabs -->
+        <div class="scan-tabs" id="scanTabs">
+            <button class="scan-tab active" data-mode="text" onclick="switchTab('text')">
+                <span class="scan-tab-icon">📝</span>
+                Paste
+            </button>
+            <button class="scan-tab" data-mode="barcode" onclick="switchTab('barcode')">
+                <span class="scan-tab-icon">📊</span>
+                Barcode
+            </button>
+            <button class="scan-tab" data-mode="photo" onclick="switchTab('photo')">
+                <span class="scan-tab-icon">📸</span>
+                Photo
+            </button>
+        </div>
+
         <!-- Input Section -->
         <div class="input-section" id="inputSection">
-            <label class="input-label">Paste your product's ingredients 👇</label>
-            <p class="input-hint">Copy the ingredient list from the product label or website and paste it below.</p>
-            <textarea
-                id="ingredientInput"
-                placeholder="e.g. Water, Glycerin, Retinol, Niacinamide, Hyaluronic Acid, Fragrance, Methylparaben..."
-            ></textarea>
-            <div class="examples">
-                <button class="example-btn" onclick="loadExample('skincare')">Try: Skincare</button>
-                <button class="example-btn" onclick="loadExample('sunscreen')">Try: Sunscreen</button>
-                <button class="example-btn" onclick="loadExample('safe')">Try: Safe Product</button>
+
+            <!-- Text Panel -->
+            <div class="scan-panel active" id="panel-text">
+                <label class="input-label">Paste your product's ingredients 👇</label>
+                <p class="input-hint">Copy the ingredient list from the product label or website.</p>
+                <textarea
+                    id="ingredientInput"
+                    placeholder="e.g. Water, Glycerin, Retinol, Niacinamide, Hyaluronic Acid, Fragrance, Methylparaben..."
+                ></textarea>
+                <div class="examples">
+                    <button class="example-btn" onclick="loadExample('skincare')">Try: Skincare</button>
+                    <button class="example-btn" onclick="loadExample('sunscreen')">Try: Sunscreen</button>
+                    <button class="example-btn" onclick="loadExample('safe')">Try: Safe Product</button>
+                </div>
             </div>
-            <button class="scan-btn" id="scanBtn" onclick="scanIngredients()">
+
+            <!-- Barcode Panel -->
+            <div class="scan-panel" id="panel-barcode">
+                <label class="input-label">Enter the barcode number 📊</label>
+                <p class="input-hint">Type the UPC or EAN number from the product packaging (the number under the barcode lines).</p>
+                <input
+                    type="text"
+                    class="barcode-input"
+                    id="barcodeInput"
+                    placeholder="e.g. 0381370036005"
+                    maxlength="20"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                >
+            </div>
+
+            <!-- Photo Panel -->
+            <div class="scan-panel" id="panel-photo">
+                <label class="input-label">Snap the ingredient list 📸</label>
+                <p class="input-hint">Take a photo of the product's ingredient list. Make sure the text is clear and well-lit.</p>
+                <div class="photo-upload" id="photoUpload">
+                    <span class="photo-upload-icon">📷</span>
+                    <div class="photo-upload-text">Tap to upload or take a photo</div>
+                    <div class="photo-upload-hint">JPEG, PNG, or WebP — max 10MB</div>
+                    <input type="file" id="photoInput" accept="image/*" capture="environment">
+                </div>
+                <div class="photo-preview" id="photoPreview">
+                    <img id="photoPreviewImg" alt="Photo preview">
+                    <button class="photo-preview-remove" onclick="removePhoto()">✕</button>
+                </div>
+            </div>
+
+            <button class="scan-btn" id="scanBtn" onclick="scanProduct()">
                 🔍 Scan Ingredients
             </button>
         </div>
@@ -579,8 +530,11 @@
 
         <!-- Results -->
         <div class="results" id="results">
-            <!-- Verdict Card -->
             <div class="verdict-card" id="verdictCard">
+                <div class="product-info" id="productInfo" style="display:none">
+                    <div class="product-name" id="productName"></div>
+                    <div class="product-brand" id="productBrand"></div>
+                </div>
                 <span class="verdict-emoji" id="verdictEmoji"></span>
                 <div class="verdict-label" id="verdictLabel"></div>
                 <div class="verdict-message" id="verdictMessage"></div>
@@ -588,24 +542,20 @@
                 <div class="verdict-watermark">bumpradar.app — free pregnancy ingredient checker</div>
             </div>
 
-            <!-- Flagged Ingredients -->
             <div class="flagged-section" id="flaggedSection">
                 <div class="flagged-title">⚠️ Flagged Ingredients</div>
                 <div id="flaggedList"></div>
             </div>
 
-            <!-- Safe Ingredients -->
             <div class="safe-section" id="safeSection">
                 <div class="safe-title">✅ Safe Ingredients</div>
                 <div class="safe-list" id="safeList"></div>
             </div>
 
-            <!-- Actions -->
             <button class="share-btn" onclick="shareResults()">📤 Share Results</button>
             <button class="scan-again-btn" onclick="scanAgain()">🔄 Scan Another Product</button>
         </div>
 
-        <!-- Disclaimer -->
         <div class="disclaimer">
             ⚕️ <strong>Not medical advice.</strong> BumpRadar is a decision-support tool.
             Always consult your healthcare provider about product safety during pregnancy.
@@ -613,7 +563,20 @@
             Built with 💕 for expecting parents
         </div>
 
-        <!-- Footer -->
+        <!-- Scan Counter -->
+        <div class="scan-counter" id="scanCounter">
+            <span id="scanCounterText"></span>
+        </div>
+
+        <!-- Premium Upsell (shown when limit reached) -->
+        <div class="premium-banner" id="premiumBanner" style="display:none">
+            <div class="premium-icon">👑</div>
+            <div class="premium-title">Go Premium</div>
+            <div class="premium-desc">Unlimited scans, priority support, and early access to new features.</div>
+            <div class="premium-price">$4.99/month</div>
+            <button class="premium-btn" onclick="alert('Coming soon! We\\'re setting up payments.')">Upgrade Now</button>
+        </div>
+
         <footer class="footer">
             <span class="footer-text">© 2026 BumpRadar · <a href="#" style="color: var(--accent);">Privacy</a></span>
         </footer>
@@ -621,6 +584,8 @@
 
     <script>
         const API_URL = '/api/v1/scan/';
+        let currentMode = 'text';
+        let selectedPhoto = null;
 
         const EXAMPLES = {
             skincare: 'Water, Glycerin, Retinol, Niacinamide, Hyaluronic Acid, Fragrance, Methylparaben, Dimethicone, Phenoxyethanol',
@@ -628,69 +593,156 @@
             safe: 'Water, Glycerin, Hyaluronic Acid, Niacinamide, Ceramides, Squalane, Vitamin C, Zinc Oxide, Shea Butter, Aloe Vera'
         };
 
+        // Tab switching
+        function switchTab(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.scan-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+            document.querySelectorAll('.scan-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(`panel-${mode}`).classList.add('active');
+
+            // Update button text
+            const btn = document.getElementById('scanBtn');
+            const labels = { text: '🔍 Scan Ingredients', barcode: '📊 Look Up Product', photo: '📸 Analyze Photo' };
+            btn.textContent = labels[mode];
+        }
+
         function loadExample(type) {
             document.getElementById('ingredientInput').value = EXAMPLES[type];
         }
 
-        async function scanIngredients() {
-            const input = document.getElementById('ingredientInput').value.trim();
-            const btn = document.getElementById('scanBtn');
-            const errorMsg = document.getElementById('errorMsg');
+        // Photo handling
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-            // Validate
-            if (!input || input.length < 3) {
-                errorMsg.textContent = 'Please paste an ingredient list first!';
-                errorMsg.classList.add('visible');
+            if (file.size > 10 * 1024 * 1024) {
+                showError('Image too large. Please use an image under 10MB.');
                 return;
             }
 
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedPhoto = e.target.result;
+                document.getElementById('photoPreviewImg').src = selectedPhoto;
+                document.getElementById('photoPreview').style.display = 'block';
+                document.getElementById('photoUpload').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Drag & drop
+        const uploadArea = document.getElementById('photoUpload');
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const input = document.getElementById('photoInput');
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files;
+                input.dispatchEvent(new Event('change'));
+            }
+        });
+
+        function removePhoto() {
+            selectedPhoto = null;
+            document.getElementById('photoPreview').style.display = 'none';
+            document.getElementById('photoUpload').style.display = 'block';
+            document.getElementById('photoInput').value = '';
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.classList.add('visible');
+        }
+
+        // Main scan function
+        async function scanProduct() {
+            const btn = document.getElementById('scanBtn');
+            const errorMsg = document.getElementById('errorMsg');
             errorMsg.classList.remove('visible');
+
+            let body = {};
+
+            if (currentMode === 'text') {
+                const input = document.getElementById('ingredientInput').value.trim();
+                if (!input || input.length < 3) {
+                    showError('Please paste an ingredient list first!');
+                    return;
+                }
+                body = { ingredient_text: input };
+            } else if (currentMode === 'barcode') {
+                const barcode = document.getElementById('barcodeInput').value.trim();
+                if (!barcode || barcode.length < 6) {
+                    showError('Please enter a valid barcode number!');
+                    return;
+                }
+                body = { barcode: barcode };
+            } else if (currentMode === 'photo') {
+                if (!selectedPhoto) {
+                    showError('Please take or upload a photo first!');
+                    return;
+                }
+                // Send base64 data (strip the data:image/...;base64, prefix is handled server-side)
+                body = { image_base64: selectedPhoto };
+            }
 
             // Loading state
             btn.disabled = true;
             btn.classList.add('loading');
+            const origText = btn.textContent;
             btn.textContent = '🔍 Scanning...';
 
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ingredient_text: input })
+                    body: JSON.stringify(body)
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    const err = await response.json().catch(() => ({}));
+                    throw new Error(err.detail || `Server error: ${response.status}`);
                 }
 
                 const data = await response.json();
                 renderResults(data);
 
             } catch (err) {
-                errorMsg.textContent = `Something went wrong: ${err.message}. Please try again.`;
-                errorMsg.classList.add('visible');
+                showError(`Something went wrong: ${err.message}. Please try again.`);
             } finally {
                 btn.disabled = false;
                 btn.classList.remove('loading');
-                btn.textContent = '🔍 Scan Ingredients';
+                btn.textContent = origText;
             }
         }
 
         function renderResults(data) {
             const results = document.getElementById('results');
             const inputSection = document.getElementById('inputSection');
+            const scanTabs = document.getElementById('scanTabs');
 
-            // Hide input, show results
             inputSection.style.display = 'none';
+            scanTabs.style.display = 'none';
             results.classList.add('visible');
+
+            // Product info
+            const productInfo = document.getElementById('productInfo');
+            if (data.product_name) {
+                document.getElementById('productName').textContent = data.product_name;
+                document.getElementById('productBrand').textContent = data.product_brand || '';
+                productInfo.style.display = 'block';
+            } else {
+                productInfo.style.display = 'none';
+            }
 
             // Verdict card
             const card = document.getElementById('verdictCard');
-            const emoji = document.getElementById('verdictEmoji');
-            const label = document.getElementById('verdictLabel');
-            const message = document.getElementById('verdictMessage');
-            const stats = document.getElementById('verdictStats');
-
-            // Remove old classes
             card.className = 'verdict-card';
 
             const safetyConfig = {
@@ -702,26 +754,17 @@
 
             const config = safetyConfig[data.overall_safety] || safetyConfig.unknown;
             card.classList.add(config.class);
-            emoji.textContent = config.emoji;
-            label.textContent = config.label;
-            message.textContent = data.verdict_message;
+            document.getElementById('verdictEmoji').textContent = config.emoji;
+            document.getElementById('verdictLabel').textContent = config.label;
+            document.getElementById('verdictMessage').textContent = data.verdict_message;
 
             // Stats
             const safeCount = data.total_ingredients_analyzed - data.flagged_ingredients.length;
             const flaggedCount = data.flagged_ingredients.length;
-            stats.innerHTML = `
-                <div class="stat">
-                    <div class="stat-number" style="color: var(--safe)">${safeCount}</div>
-                    <div class="stat-label">Safe</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" style="color: var(--caution)">${flaggedCount}</div>
-                    <div class="stat-label">Flagged</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">${data.total_ingredients_analyzed}</div>
-                    <div class="stat-label">Total</div>
-                </div>
+            document.getElementById('verdictStats').innerHTML = `
+                <div class="stat"><div class="stat-number" style="color:var(--safe)">${safeCount}</div><div class="stat-label">Safe</div></div>
+                <div class="stat"><div class="stat-number" style="color:var(--caution)">${flaggedCount}</div><div class="stat-label">Flagged</div></div>
+                <div class="stat"><div class="stat-number">${data.total_ingredients_analyzed}</div><div class="stat-label">Total</div></div>
             `;
 
             // Flagged ingredients
@@ -748,25 +791,25 @@
                 });
             }
 
-            // Safe ingredients (we'll show what's NOT flagged)
+            // Safe ingredients
             const safeSection = document.getElementById('safeSection');
             const safeListEl = document.getElementById('safeList');
             safeListEl.innerHTML = '';
 
-            // Parse original input to find safe ones
-            const allIngredients = document.getElementById('ingredientInput').value
-                .split(/[,;\n]/)
-                .map(s => s.trim())
-                .filter(s => s.length > 1);
-
-            const flaggedNames = new Set(data.flagged_ingredients.map(i => i.name.toLowerCase()));
-            const safeIngredients = allIngredients.filter(name => {
-                return !flaggedNames.has(name.toLowerCase()) &&
-                       !data.flagged_ingredients.some(f =>
-                           name.toLowerCase().includes(f.name.toLowerCase()) ||
-                           f.name.toLowerCase().includes(name.toLowerCase())
-                       );
-            });
+            // For text mode, parse input; for other modes, approximate from total - flagged
+            let safeIngredients = [];
+            if (currentMode === 'text') {
+                const allIngredients = document.getElementById('ingredientInput').value
+                    .split(/[,;\n]/).map(s => s.trim()).filter(s => s.length > 1);
+                const flaggedNames = new Set(data.flagged_ingredients.map(i => i.name.toLowerCase()));
+                safeIngredients = allIngredients.filter(name =>
+                    !flaggedNames.has(name.toLowerCase()) &&
+                    !data.flagged_ingredients.some(f =>
+                        name.toLowerCase().includes(f.name.toLowerCase()) ||
+                        f.name.toLowerCase().includes(name.toLowerCase())
+                    )
+                );
+            }
 
             if (safeIngredients.length === 0) {
                 safeSection.style.display = 'none';
@@ -780,53 +823,119 @@
                 });
             }
 
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function scanAgain() {
             document.getElementById('results').classList.remove('visible');
             document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('scanTabs').style.display = 'flex';
             document.getElementById('ingredientInput').value = '';
+            document.getElementById('barcodeInput').value = '';
+            removePhoto();
             document.getElementById('errorMsg').classList.remove('visible');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function shareResults() {
             const text = `I just scanned my product on BumpRadar! 🤰📡\nCheck if your products are pregnancy-safe too 👇\nhttps://bumpradar.app`;
-
             if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'BumpRadar - Pregnancy Safety Check',
-                        text: text,
-                        url: 'https://bumpradar.app'
-                    });
-                } catch (e) {
-                    // User cancelled or share failed
-                    fallbackCopy(text);
-                }
-            } else {
-                fallbackCopy(text);
-            }
+                try { await navigator.share({ title: 'BumpRadar', text, url: 'https://bumpradar.app' }); }
+                catch (e) { fallbackCopy(text); }
+            } else { fallbackCopy(text); }
         }
 
         function fallbackCopy(text) {
             navigator.clipboard.writeText(text).then(() => {
                 const btn = document.querySelector('.share-btn');
                 btn.textContent = '✅ Link Copied!';
-                setTimeout(() => {
-                    btn.textContent = '📤 Share Results';
-                }, 2000);
+                setTimeout(() => btn.textContent = '📤 Share Results', 2000);
             });
         }
 
-        // Allow Enter to scan
-        document.getElementById('ingredientInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                // Don't prevent default — let users add newlines with Shift+Enter
-            }
+        // Enter key for barcode
+        document.getElementById('barcodeInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') scanProduct();
         });
+
+        // Scan counter
+        async function updateScanCounter() {
+            try {
+                const resp = await fetch('/api/v1/scan/usage');
+                const data = await resp.json();
+                const el = document.getElementById('scanCounterText');
+                if (data.scans_remaining > 0) {
+                    el.innerHTML = `<span class="scans-left">${data.scans_remaining}</span> free scan${data.scans_remaining !== 1 ? 's' : ''} remaining today`;
+                    document.getElementById('premiumBanner').style.display = 'none';
+                } else {
+                    el.innerHTML = 'Daily free scans used up!';
+                    document.getElementById('premiumBanner').style.display = 'block';
+                }
+            } catch (e) { /* silent */ }
+        }
+
+        // Handle 429 in scan
+        const _origScan = scanProduct;
+        scanProduct = async function() {
+            const btn = document.getElementById('scanBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.classList.remove('visible');
+
+            let body = {};
+            if (currentMode === 'text') {
+                const input = document.getElementById('ingredientInput').value.trim();
+                if (!input || input.length < 3) { showError('Please paste an ingredient list first!'); return; }
+                body = { ingredient_text: input };
+            } else if (currentMode === 'barcode') {
+                const barcode = document.getElementById('barcodeInput').value.trim();
+                if (!barcode || barcode.length < 6) { showError('Please enter a valid barcode number!'); return; }
+                body = { barcode: barcode };
+            } else if (currentMode === 'photo') {
+                if (!selectedPhoto) { showError('Please take or upload a photo first!'); return; }
+                body = { image_base64: selectedPhoto };
+            }
+
+            btn.disabled = true;
+            btn.classList.add('loading');
+            const origText = btn.textContent;
+            btn.textContent = '🔍 Scanning...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.status === 429) {
+                    const err = await response.json();
+                    const detail = err.detail || {};
+                    showError(detail.message || 'Daily scan limit reached! Upgrade for unlimited scans.');
+                    document.getElementById('premiumBanner').style.display = 'block';
+                    updateScanCounter();
+                    return;
+                }
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({}));
+                    throw new Error(err.detail || `Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                renderResults(data);
+                updateScanCounter();
+
+            } catch (err) {
+                showError(`Something went wrong: ${err.message}. Please try again.`);
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('loading');
+                btn.textContent = origText;
+            }
+        };
+
+        // Load counter on page load
+        updateScanCounter();
     </script>
 </body>
 </html>

@@ -5,8 +5,10 @@ Routes scan requests to appropriate handlers
 from sqlalchemy.orm import Session
 from app.agents.base import BaseAgent
 from app.agents.safety_classifier import SafetyClassifierAgent
+from app.agents.product_scanner import ProductScannerAgent
+from app.agents.ocr_agent import OCRAgent
 from app.schemas.scan import ScanRequest, ScanResponse
-from app.models.product import Product
+from app.models.enums import SafetyLevel
 
 
 class OrchestratorAgent(BaseAgent):
@@ -14,24 +16,20 @@ class OrchestratorAgent(BaseAgent):
     Orchestrator Agent - Routes scan requests
 
     Responsibilities:
-    1. If barcode provided -> lookup product in DB -> delegate to classifier
+    1. If barcode provided -> ProductScannerAgent -> classifier
     2. If ingredient_text provided -> delegate directly to classifier
-    3. If image provided -> delegate to OCR agent (future) -> classifier
+    3. If image provided -> OCRAgent -> classifier
     """
 
     def execute(self, request: ScanRequest) -> ScanResponse:
         """
         Execute scan request routing
-
-        Args:
-            request: ScanRequest with barcode, ingredient_text, or image
-
-        Returns:
-            ScanResponse with safety verdict
         """
-        self.log_info(f"Orchestrating scan request: barcode={request.barcode}, has_text={bool(request.ingredient_text)}")
+        self.log_info(f"Orchestrating scan request: barcode={request.barcode}, "
+                      f"has_text={bool(request.ingredient_text)}, "
+                      f"has_image={bool(request.image_base64)}")
 
-        # Route 1: Barcode lookup
+        # Route 1: Barcode lookup via ProductScannerAgent
         if request.barcode:
             return self._handle_barcode_scan(request.barcode)
 
@@ -39,77 +37,61 @@ class OrchestratorAgent(BaseAgent):
         if request.ingredient_text:
             return self._handle_ingredient_text(request.ingredient_text)
 
-        # Route 3: Image OCR (future)
+        # Route 3: Image OCR via OCRAgent
         if request.image_base64:
-            self.log_warning("Image OCR not yet implemented")
-            return ScanResponse(
-                overall_safety="unknown",
-                verdict_message="Image scanning not yet available",
-                flagged_ingredients=[],
-                total_ingredients_analyzed=0,
-                confidence=0.0
-            )
+            return self._handle_image_scan(request.image_base64)
 
-        # Should not reach here due to validation in endpoint
         raise ValueError("No valid input provided")
 
     def _handle_barcode_scan(self, barcode: str) -> ScanResponse:
-        """
-        Handle barcode-based product lookup
+        """Handle barcode-based product lookup using ProductScannerAgent."""
+        scanner = ProductScannerAgent(self.db)
+        result = scanner.execute(barcode)
 
-        Args:
-            barcode: Product barcode (UPC/EAN)
-
-        Returns:
-            ScanResponse with product analysis
-        """
-        self.log_info(f"Looking up product by barcode: {barcode}")
-
-        # Lookup product in database
-        product = self.db.query(Product).filter(Product.barcode == barcode).first()
-
-        if not product:
-            self.log_warning(f"Product not found for barcode: {barcode}")
+        if not result["found"]:
             return ScanResponse(
-                overall_safety="unknown",
-                verdict_message="Product not found in database. Try entering ingredients manually.",
+                overall_safety=SafetyLevel.UNKNOWN,
+                verdict_message="Product not found. Try scanning the ingredient list instead.",
                 flagged_ingredients=[],
                 total_ingredients_analyzed=0,
-                product_name=None,
-                product_brand=None,
-                confidence=0.0
+                confidence=0.0,
             )
 
-        # Product found - get ingredient list and analyze
-        ingredient_names = [ing.name for ing in product.ingredients]
-        ingredient_text = ", ".join(ingredient_names)
-
-        self.log_info(f"Found product: {product.name} ({product.brand}) with {len(ingredient_names)} ingredients")
-
-        # Delegate to classifier
+        # Classify the ingredients
         classifier = SafetyClassifierAgent(self.db)
-        result = classifier.execute(ingredient_text)
+        scan_result = classifier.execute(result["ingredient_text"])
 
-        # Add product metadata to response
-        result.product_name = product.name
-        result.product_brand = product.brand
+        # Add product metadata
+        scan_result.product_name = result.get("product_name")
+        scan_result.product_brand = result.get("brand")
 
-        return result
+        return scan_result
 
     def _handle_ingredient_text(self, ingredient_text: str) -> ScanResponse:
-        """
-        Handle direct ingredient text analysis
-
-        Args:
-            ingredient_text: Comma-separated ingredient list
-
-        Returns:
-            ScanResponse with ingredient analysis
-        """
-        self.log_info(f"Analyzing ingredient text (length: {len(ingredient_text)})")
-
-        # Delegate to classifier
+        """Handle direct ingredient text analysis."""
         classifier = SafetyClassifierAgent(self.db)
-        result = classifier.execute(ingredient_text)
+        return classifier.execute(ingredient_text)
 
-        return result
+    def _handle_image_scan(self, image_base64: str) -> ScanResponse:
+        """Handle image-based scanning via OCR Agent."""
+        ocr = OCRAgent(self.db)
+        ocr_result = ocr.execute(image_base64)
+
+        if not ocr_result["success"]:
+            return ScanResponse(
+                overall_safety=SafetyLevel.UNKNOWN,
+                verdict_message=ocr_result.get("error", "Could not read the image. Please try a clearer photo."),
+                flagged_ingredients=[],
+                total_ingredients_analyzed=0,
+                confidence=0.0,
+            )
+
+        # Classify extracted ingredients
+        classifier = SafetyClassifierAgent(self.db)
+        scan_result = classifier.execute(ocr_result["ingredient_text"])
+
+        # Add product metadata from OCR
+        if ocr_result.get("product_name"):
+            scan_result.product_name = ocr_result["product_name"]
+
+        return scan_result

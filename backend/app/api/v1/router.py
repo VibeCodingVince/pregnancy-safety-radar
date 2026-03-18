@@ -1,13 +1,12 @@
 """
 API v1 Router
-Aggregates all endpoint routers - FIXES THE BROKEN IMPORT
+Aggregates all endpoint routers
 """
 from fastapi import APIRouter
-from app.api.v1.endpoints import ingredients, products, scan
+from app.api.v1.endpoints import ingredients, products, scan, admin
 
 api_router = APIRouter()
 
-# Include all endpoint routers
 api_router.include_router(
     ingredients.router,
     prefix="/ingredients",
@@ -24,4 +23,10 @@ api_router.include_router(
     scan.router,
     prefix="/scan",
     tags=["scan"]
+)
+
+api_router.include_router(
+    admin.router,
+    prefix="/admin",
+    tags=["admin"]
 )
