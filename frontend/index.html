@@ -11,167 +11,277 @@
     <meta property="og:url" content="https://bumpradar.app">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --safe: #22c55e;
-            --safe-bg: #f0fdf4;
-            --safe-border: #86efac;
-            --caution: #f59e0b;
-            --caution-bg: #fffbeb;
-            --caution-border: #fcd34d;
-            --avoid: #ef4444;
-            --avoid-bg: #fef2f2;
-            --avoid-border: #fca5a5;
-            --unknown: #8b5cf6;
-            --unknown-bg: #f5f3ff;
-            --unknown-border: #c4b5fd;
-            --bg: #faf9f7;
-            --card: #ffffff;
-            --text: #1a1a1a;
-            --text-muted: #6b7280;
-            --accent: #ec4899;
-            --accent-light: #fce7f3;
-            --border: #e5e7eb;
-            --radius: 16px;
+            --safe: #5BA67A;
+            --safe-bg: #EEF7F1;
+            --safe-border: #A3D4B5;
+            --caution: #D4952B;
+            --caution-bg: #FFF8ED;
+            --caution-border: #E8C784;
+            --avoid: #D45B6F;
+            --avoid-bg: #FDF0F2;
+            --avoid-border: #EAACB5;
+            --unknown: #9B8AB8;
+            --unknown-bg: #F5F1FA;
+            --unknown-border: #C9BFDB;
+            --bg: #FFF5F6;
+            --bg-deep: #FCE8EB;
+            --card: #FFFFFF;
+            --text: #3D2E3C;
+            --text-muted: #8C7B89;
+            --accent: #D4708F;
+            --accent-light: #FCEEF3;
+            --accent-hover: #C25D7A;
+            --border: #EDDDE3;
+            --radius: 20px;
+            --font-display: 'Fraunces', Georgia, serif;
+            --font-body: 'Lexend', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: var(--font-body);
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            position: relative;
+        }
+
+        /* Grain texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
         }
 
         .container {
             max-width: 480px;
             margin: 0 auto;
-            padding: 20px 16px;
+            padding: 20px 20px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        /* Header */
+        /* ─── Header ─── */
         .header {
-            text-align: center;
-            padding: 24px 0 20px;
+            text-align: left;
+            padding: 32px 0 28px;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-light), #F5D5E0);
+            opacity: 0.6;
+            z-index: -1;
         }
 
         .logo {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
+            font-family: var(--font-display);
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--text);
+            letter-spacing: -1px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .logo-icon { font-size: 28px; margin-right: 4px; }
-        .tagline { color: var(--text-muted); font-size: 15px; margin-top: 4px; font-weight: 500; }
+        .logo-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin-left: 2px;
+            animation: pulse 2.5s ease-in-out infinite;
+        }
 
-        /* Scan Mode Tabs */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        .tagline {
+            font-family: var(--font-display);
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-top: 8px;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+        }
+
+        /* ─── Scan Mode Tabs ─── */
         .scan-tabs {
             display: flex;
-            gap: 4px;
-            background: var(--border);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 16px;
+            gap: 6px;
+            margin-bottom: 20px;
         }
 
         .scan-tab {
             flex: 1;
-            padding: 10px 8px;
-            border: none;
+            padding: 12px 8px;
+            border: 2px solid var(--border);
             background: transparent;
-            border-radius: 10px;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
+            border-radius: 14px;
+            font-family: var(--font-body);
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .scan-tab.active {
-            background: var(--card);
-            color: var(--text);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 112, 143, 0.25);
         }
 
-        .scan-tab-icon { font-size: 20px; }
+        .scan-tab:not(.active):hover {
+            border-color: var(--text-muted);
+            color: var(--text);
+        }
 
-        /* Input Section */
+        .scan-tab-icon { font-size: 22px; }
+
+        /* ─── Input Section ─── */
         .input-section {
             background: var(--card);
             border-radius: var(--radius);
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            padding: 28px 24px;
+            box-shadow: 0 2px 20px rgba(45, 42, 38, 0.06);
             border: 1px solid var(--border);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-section::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 24px; right: 24px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #E8A4BE, var(--safe));
+            border-radius: 0 0 4px 4px;
         }
 
         .scan-panel { display: none; }
-        .scan-panel.active { display: block; }
+        .scan-panel.active { display: block; animation: fadeIn 0.3s ease-out; }
 
-        .input-label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 10px; display: block; }
-        .input-hint { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-label {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: -0.3px;
+        }
+
+        .input-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.5;
+            font-weight: 300;
+        }
 
         textarea {
             width: 100%;
-            min-height: 120px;
+            min-height: 130px;
             border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 14px;
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            line-height: 1.5;
+            border-radius: 14px;
+            padding: 16px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1.7;
             resize: vertical;
-            transition: border-color 0.2s;
+            transition: all 0.3s;
             background: var(--bg);
             color: var(--text);
         }
 
-        textarea:focus { outline: none; border-color: var(--accent); background: white; }
-        textarea::placeholder { color: #9ca3af; }
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 4px var(--accent-light);
+        }
+
+        textarea::placeholder { color: #B0A99E; font-style: italic; }
 
         /* Barcode input */
         .barcode-input {
             width: 100%;
             border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            font-family: 'Inter', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
+            border-radius: 14px;
+            padding: 18px;
+            font-family: 'Fraunces', monospace;
+            font-size: 22px;
+            font-weight: 500;
             text-align: center;
-            letter-spacing: 2px;
-            transition: border-color 0.2s;
+            letter-spacing: 4px;
+            transition: all 0.3s;
             background: var(--bg);
             color: var(--text);
         }
 
-        .barcode-input:focus { outline: none; border-color: var(--accent); background: white; }
-        .barcode-input::placeholder { color: #9ca3af; font-weight: 400; letter-spacing: 0; font-size: 15px; }
+        .barcode-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 4px var(--accent-light);
+        }
+
+        .barcode-input::placeholder {
+            color: #B0A99E;
+            font-weight: 300;
+            letter-spacing: 1px;
+            font-size: 14px;
+            font-family: var(--font-body);
+        }
 
         /* Photo upload area */
         .photo-upload {
             border: 2px dashed var(--border);
-            border-radius: 12px;
-            padding: 32px 20px;
+            border-radius: 16px;
+            padding: 40px 20px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             background: var(--bg);
             position: relative;
         }
@@ -179,11 +289,20 @@
         .photo-upload:hover, .photo-upload.dragover {
             border-color: var(--accent);
             background: var(--accent-light);
+            transform: scale(1.01);
         }
 
-        .photo-upload-icon { font-size: 48px; margin-bottom: 12px; display: block; }
-        .photo-upload-text { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-        .photo-upload-hint { font-size: 13px; color: var(--text-muted); }
+        .photo-upload-icon { font-size: 52px; margin-bottom: 14px; display: block; }
+
+        .photo-upload-text {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .photo-upload-hint { font-size: 12px; color: var(--text-muted); font-weight: 300; }
 
         .photo-upload input[type="file"] {
             position: absolute;
@@ -194,8 +313,8 @@
         .photo-preview {
             display: none;
             position: relative;
-            margin-top: 12px;
-            border-radius: 12px;
+            margin-top: 14px;
+            border-radius: 16px;
             overflow: hidden;
         }
 
@@ -203,96 +322,99 @@
             width: 100%;
             max-height: 300px;
             object-fit: contain;
-            border-radius: 12px;
-            background: #f3f4f6;
+            border-radius: 16px;
+            background: var(--bg-deep);
         }
 
         .photo-preview-remove {
             position: absolute;
-            top: 8px; right: 8px;
-            background: rgba(0,0,0,0.6);
-            color: white;
+            top: 10px; right: 10px;
+            background: var(--text);
+            color: var(--bg);
             border: none;
             border-radius: 50%;
-            width: 32px; height: 32px;
+            width: 36px; height: 36px;
             cursor: pointer;
             font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: transform 0.2s;
         }
 
-        /* Camera button */
-        .camera-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 12px;
-            padding: 10px 20px;
-            background: var(--accent-light);
-            color: var(--accent);
-            border: 2px solid var(--accent);
-            border-radius: 10px;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        .photo-preview-remove:hover { transform: scale(1.1) rotate(90deg); }
 
-        .camera-btn:hover { background: var(--accent); color: white; }
-
-        /* Scan button */
+        /* ─── Scan Button ─── */
         .scan-btn {
             width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--accent), #d946ef);
-            color: white;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--accent), #E8A4BE);
+            color: #fff;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 14px;
-            transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
-            letter-spacing: 0.3px;
+            margin-top: 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: var(--font-body);
+            letter-spacing: 1px;
+            text-transform: uppercase;
             position: relative;
             overflow: hidden;
         }
 
-        .scan-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4); }
+        .scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 112, 143, 0.35);
+        }
+
         .scan-btn:active { transform: translateY(0); }
-        .scan-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         .scan-btn.loading::after {
             content: '';
             position: absolute; top: 0; left: -100%;
             width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(253, 246, 236, 0.15), transparent);
             animation: shimmer 1.5s infinite;
         }
 
         @keyframes shimmer { 100% { left: 100%; } }
 
-        /* Results */
-        .results { display: none; animation: slideUp 0.4s ease-out; }
+        /* ─── Results ─── */
+        .results { display: none; }
         .results.visible { display: block; }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .results.visible .verdict-card { animation: revealCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .results.visible .flagged-section { animation: revealCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
+        .results.visible .safe-section { animation: revealCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
+        .results.visible .share-btn { animation: revealCard 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both; }
+        .results.visible .scan-again-btn { animation: revealCard 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both; }
+
+        @keyframes revealCard {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Verdict Card */
+        /* ─── Verdict Card ─── */
         .verdict-card {
             border-radius: var(--radius);
-            padding: 24px;
+            padding: 32px 24px;
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             border: 2px solid;
             position: relative;
             overflow: hidden;
+        }
+
+        .verdict-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%);
+            pointer-events: none;
         }
 
         .verdict-card.safe { background: var(--safe-bg); border-color: var(--safe-border); }
@@ -300,164 +422,430 @@
         .verdict-card.avoid { background: var(--avoid-bg); border-color: var(--avoid-border); }
         .verdict-card.unknown { background: var(--unknown-bg); border-color: var(--unknown-border); }
 
-        .verdict-emoji { font-size: 56px; margin-bottom: 12px; display: block; }
+        .verdict-emoji { font-size: 64px; margin-bottom: 16px; display: block; }
 
         .verdict-label {
-            font-size: 24px; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 1px; margin-bottom: 8px;
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
         }
 
-        .verdict-card.safe .verdict-label { color: #16a34a; }
-        .verdict-card.caution .verdict-label { color: #d97706; }
-        .verdict-card.avoid .verdict-label { color: #dc2626; }
-        .verdict-card.unknown .verdict-label { color: #7c3aed; }
+        .verdict-card.safe .verdict-label { color: var(--safe); }
+        .verdict-card.caution .verdict-label { color: var(--caution); }
+        .verdict-card.avoid .verdict-label { color: var(--avoid); }
+        .verdict-card.unknown .verdict-label { color: var(--unknown); }
 
-        .verdict-message { font-size: 15px; color: var(--text-muted); line-height: 1.5; }
+        .verdict-message {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-weight: 300;
+            max-width: 320px;
+            margin: 0 auto;
+        }
 
         .product-info {
-            margin-bottom: 16px;
-            padding: 12px;
-            background: rgba(255,255,255,0.6);
-            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 14px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 12px;
+            backdrop-filter: blur(4px);
         }
 
-        .product-name { font-size: 17px; font-weight: 700; }
-        .product-brand { font-size: 14px; color: var(--text-muted); }
+        .product-name {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .product-brand { font-size: 13px; color: var(--text-muted); font-weight: 300; }
 
         .verdict-stats {
-            display: flex; justify-content: center; gap: 24px;
-            margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.06);
         }
 
         .stat { text-align: center; }
-        .stat-number { font-size: 22px; font-weight: 800; }
-        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
 
-        .verdict-watermark { font-size: 12px; color: var(--text-muted); margin-top: 16px; font-weight: 600; opacity: 0.6; }
-
-        /* Flagged Ingredients */
-        .flagged-section {
-            background: var(--card); border-radius: var(--radius); padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid var(--border); margin-bottom: 16px;
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1;
         }
 
-        .flagged-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
 
-        .flagged-item { padding: 14px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid; }
+        .verdict-watermark {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 20px;
+            font-weight: 300;
+            opacity: 0.5;
+            letter-spacing: 0.5px;
+        }
+
+        /* ─── Flagged Ingredients ─── */
+        .flagged-section {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: 0 2px 20px rgba(45, 42, 38, 0.06);
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .flagged-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .flagged-item {
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+
+        .flagged-item:hover { transform: translateX(4px); }
+
         .flagged-item.avoid { background: var(--avoid-bg); border-left-color: var(--avoid); }
         .flagged-item.caution { background: var(--caution-bg); border-left-color: var(--caution); }
         .flagged-item.unknown { background: var(--unknown-bg); border-left-color: var(--unknown); }
 
-        .flagged-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .flagged-name { font-weight: 700; font-size: 15px; }
+        .flagged-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+
+        .flagged-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 15px;
+        }
 
         .flagged-badge {
-            font-size: 11px; font-weight: 700; text-transform: uppercase;
-            padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 1px;
         }
 
         .flagged-badge.avoid { background: var(--avoid); color: white; }
         .flagged-badge.caution { background: var(--caution); color: white; }
         .flagged-badge.unknown { background: var(--unknown); color: white; }
 
-        .flagged-reason { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-top: 4px; }
-        .flagged-alternative { font-size: 13px; color: var(--safe); font-weight: 600; margin-top: 6px; }
-        .flagged-alternative::before { content: '✅ Try instead: '; }
+        .flagged-reason { font-size: 13px; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
 
-        /* Safe list */
+        .flagged-alternative {
+            font-size: 13px;
+            color: var(--safe);
+            font-weight: 600;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(0,0,0,0.08);
+        }
+        .flagged-alternative::before { content: '→ Try instead: '; }
+
+        /* ─── Safe List ─── */
         .safe-section {
-            background: var(--card); border-radius: var(--radius); padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid var(--border); margin-bottom: 16px;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: 0 2px 20px rgba(45, 42, 38, 0.06);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
         }
 
-        .safe-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #16a34a; }
+        .safe-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--safe);
+            letter-spacing: -0.3px;
+        }
+
         .safe-list { display: flex; flex-wrap: wrap; gap: 8px; }
 
         .safe-chip {
-            background: var(--safe-bg); color: #16a34a;
-            padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;
+            background: var(--safe-bg);
+            color: var(--safe);
+            padding: 7px 14px;
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 500;
             border: 1px solid var(--safe-border);
+            transition: all 0.2s;
         }
 
-        /* Disclaimer */
-        .disclaimer {
-            text-align: center; padding: 20px; font-size: 12px;
-            color: var(--text-muted); line-height: 1.6;
+        .safe-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(90, 143, 101, 0.15);
         }
+
+        /* ─── Disclaimer ─── */
+        .disclaimer {
+            text-align: center;
+            padding: 24px 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        .disclaimer strong {
+            font-weight: 600;
+            color: var(--text);
+        }
+
         .disclaimer a { color: var(--accent); text-decoration: none; }
 
-        /* Action buttons */
+        /* ─── Action Buttons ─── */
         .share-btn {
-            width: 100%; padding: 14px; background: var(--card); color: var(--text);
-            border: 2px solid var(--border); border-radius: 12px; font-size: 15px;
-            font-weight: 600; cursor: pointer; margin-bottom: 16px; font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
+            width: 100%;
+            padding: 16px;
+            background: var(--card);
+            color: var(--text);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+            font-family: var(--font-body);
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
         }
-        .share-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .share-btn:hover {
+            border-color: var(--text);
+            transform: translateY(-1px);
+        }
 
         .scan-again-btn {
-            width: 100%; padding: 14px; background: transparent; color: var(--accent);
-            border: 2px solid var(--accent); border-radius: 12px; font-size: 15px;
-            font-weight: 700; cursor: pointer; margin-bottom: 16px; font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 16px;
+            font-family: var(--font-body);
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
-        .scan-again-btn:hover { background: var(--accent-light); }
 
+        .scan-again-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* ─── Error ─── */
         .error-msg {
-            background: var(--avoid-bg); border: 1px solid var(--avoid-border); color: #dc2626;
-            padding: 14px; border-radius: 12px; font-size: 14px; text-align: center;
-            margin-bottom: 16px; display: none; font-weight: 500;
+            background: var(--avoid-bg);
+            border: 2px solid var(--avoid-border);
+            color: var(--avoid);
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 16px;
+            display: none;
+            font-weight: 500;
         }
-        .error-msg.visible { display: block; }
+        .error-msg.visible { display: block; animation: shake 0.4s ease-out; }
 
-        .examples { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* ─── Examples ─── */
+        .examples { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
 
         .example-btn {
-            background: var(--accent-light); color: var(--accent); border: none;
-            padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
-            cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1.5px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
         }
-        .example-btn:hover { background: var(--accent); color: white; }
 
-        /* Scan counter */
+        .example-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        /* ─── Scan Counter ─── */
         .scan-counter {
-            text-align: center; padding: 10px; font-size: 13px;
-            color: var(--text-muted); font-weight: 500;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 300;
+            letter-spacing: 0.3px;
         }
-        .scan-counter .scans-left { font-weight: 700; color: var(--accent); }
 
-        /* Premium banner */
+        .scan-counter .scans-left {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        /* ─── Premium Banner ─── */
         .premium-banner {
-            background: linear-gradient(135deg, #fef3c7, #fce7f3);
-            border: 2px solid #fcd34d;
-            border-radius: var(--radius); padding: 24px; text-align: center;
+            background: var(--card);
+            border: 2px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            text-align: center;
             margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
         }
-        .premium-icon { font-size: 40px; margin-bottom: 8px; }
-        .premium-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
-        .premium-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; }
-        .premium-price { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 14px; }
-        .premium-btn {
-            padding: 14px 32px; background: linear-gradient(135deg, var(--accent), #d946ef);
-            color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700;
-            cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
-        }
-        .premium-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(236,72,153,0.4); }
 
-        .footer { text-align: center; padding: 16px 0; margin-top: auto; }
-        .footer-text { font-size: 12px; color: var(--text-muted); }
+        .premium-banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--accent-light) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .premium-icon { font-size: 44px; margin-bottom: 12px; position: relative; }
+
+        .premium-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+
+        .premium-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.5;
+            font-weight: 300;
+            position: relative;
+        }
+
+        .premium-price {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .premium-btn {
+            padding: 16px 36px;
+            background: linear-gradient(135deg, var(--accent), #E8A4BE);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .premium-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 112, 143, 0.35);
+        }
+
+        /* ─── Footer ─── */
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .footer-text a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-text a:hover { color: var(--accent); }
+
+        /* ─── Decorative elements ─── */
+        .deco-line {
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin: 4px 0 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <div class="logo"><span class="logo-icon">📡</span>BumpRadar</div>
+            <div class="logo">
+                BumpRadar<span class="logo-dot"></span>
+            </div>
+            <div class="deco-line"></div>
             <p class="tagline">Is it safe for your bump? Find out instantly.</p>
         </header>
 
         <!-- Scan Mode Tabs -->
         <div class="scan-tabs" id="scanTabs">
-            <button class="scan-tab active" data-mode="text" onclick="switchTab('text')">
+            <button class="scan-tab" data-mode="text" onclick="switchTab('text')">
                 <span class="scan-tab-icon">📝</span>
                 Paste
             </button>
@@ -465,7 +853,7 @@
                 <span class="scan-tab-icon">📊</span>
                 Barcode
             </button>
-            <button class="scan-tab" data-mode="photo" onclick="switchTab('photo')">
+            <button class="scan-tab active" data-mode="photo" onclick="switchTab('photo')">
                 <span class="scan-tab-icon">📸</span>
                 Photo
             </button>
@@ -475,8 +863,8 @@
         <div class="input-section" id="inputSection">
 
             <!-- Text Panel -->
-            <div class="scan-panel active" id="panel-text">
-                <label class="input-label">Paste your product's ingredients 👇</label>
+            <div class="scan-panel" id="panel-text">
+                <label class="input-label">Paste your ingredients</label>
                 <p class="input-hint">Copy the ingredient list from the product label or website.</p>
                 <textarea
                     id="ingredientInput"
@@ -491,7 +879,7 @@
 
             <!-- Barcode Panel -->
             <div class="scan-panel" id="panel-barcode">
-                <label class="input-label">Enter the barcode number 📊</label>
+                <label class="input-label">Enter the barcode number</label>
                 <p class="input-hint">Type the UPC or EAN number from the product packaging (the number under the barcode lines).</p>
                 <input
                     type="text"
@@ -505,8 +893,8 @@
             </div>
 
             <!-- Photo Panel -->
-            <div class="scan-panel" id="panel-photo">
-                <label class="input-label">Snap the ingredient list 📸</label>
+            <div class="scan-panel active" id="panel-photo">
+                <label class="input-label">Snap the ingredient list</label>
                 <p class="input-hint">Take a photo of the product's ingredient list. Make sure the text is clear and well-lit.</p>
                 <div class="photo-upload" id="photoUpload">
                     <span class="photo-upload-icon">📷</span>
@@ -521,7 +909,7 @@
             </div>
 
             <button class="scan-btn" id="scanBtn" onclick="scanProduct()">
-                🔍 Scan Ingredients
+                Analyze Photo
             </button>
         </div>
 
@@ -539,7 +927,7 @@
                 <div class="verdict-label" id="verdictLabel"></div>
                 <div class="verdict-message" id="verdictMessage"></div>
                 <div class="verdict-stats" id="verdictStats"></div>
-                <div class="verdict-watermark">bumpradar.app — free pregnancy ingredient checker</div>
+                <div class="verdict-watermark">bumpradar.app</div>
             </div>
 
             <div class="flagged-section" id="flaggedSection">
@@ -552,15 +940,13 @@
                 <div class="safe-list" id="safeList"></div>
             </div>
 
-            <button class="share-btn" onclick="shareResults()">📤 Share Results</button>
-            <button class="scan-again-btn" onclick="scanAgain()">🔄 Scan Another Product</button>
+            <button class="share-btn" onclick="shareResults()">Share Results</button>
+            <button class="scan-again-btn" onclick="scanAgain()">Scan Another Product</button>
         </div>
 
         <div class="disclaimer">
-            ⚕️ <strong>Not medical advice.</strong> BumpRadar is a decision-support tool.
+            <strong>Not medical advice.</strong> BumpRadar is a decision-support tool.
             Always consult your healthcare provider about product safety during pregnancy.
-            <br><br>
-            Built with 💕 for expecting parents
         </div>
 
         <!-- Scan Counter -->
@@ -570,21 +956,21 @@
 
         <!-- Premium Upsell (shown when limit reached) -->
         <div class="premium-banner" id="premiumBanner" style="display:none">
-            <div class="premium-icon">👑</div>
+            <div class="premium-icon">✦</div>
             <div class="premium-title">Go Premium</div>
             <div class="premium-desc">Unlimited scans, priority support, and early access to new features.</div>
             <div class="premium-price">$4.99/month</div>
-            <button class="premium-btn" onclick="alert('Coming soon! We\\'re setting up payments.')">Upgrade Now</button>
+            <button class="premium-btn" onclick="alert('Coming soon! We\'re setting up payments.')">Upgrade Now</button>
         </div>
 
         <footer class="footer">
-            <span class="footer-text">© 2026 BumpRadar · <a href="#" style="color: var(--accent);">Privacy</a></span>
+            <span class="footer-text">© 2026 BumpRadar · <a href="#">Privacy</a></span>
         </footer>
     </div>
 
     <script>
         const API_URL = '/api/v1/scan/';
-        let currentMode = 'text';
+        let currentMode = 'photo';
         let selectedPhoto = null;
 
         const EXAMPLES = {
@@ -601,9 +987,8 @@
             document.querySelectorAll('.scan-panel').forEach(p => p.classList.remove('active'));
             document.getElementById(`panel-${mode}`).classList.add('active');
 
-            // Update button text
             const btn = document.getElementById('scanBtn');
-            const labels = { text: '🔍 Scan Ingredients', barcode: '📊 Look Up Product', photo: '📸 Analyze Photo' };
+            const labels = { text: 'Scan Ingredients', barcode: 'Look Up Product', photo: 'Analyze Photo' };
             btn.textContent = labels[mode];
         }
 
@@ -688,15 +1073,13 @@
                     showError('Please take or upload a photo first!');
                     return;
                 }
-                // Send base64 data (strip the data:image/...;base64, prefix is handled server-side)
                 body = { image_base64: selectedPhoto };
             }
 
-            // Loading state
             btn.disabled = true;
             btn.classList.add('loading');
             const origText = btn.textContent;
-            btn.textContent = '🔍 Scanning...';
+            btn.textContent = 'Scanning...';
 
             try {
                 const response = await fetch(API_URL, {
@@ -705,6 +1088,15 @@
                     body: JSON.stringify(body)
                 });
 
+                if (response.status === 429) {
+                    const err = await response.json();
+                    const detail = err.detail || {};
+                    showError(detail.message || 'Daily scan limit reached! Upgrade for unlimited scans.');
+                    document.getElementById('premiumBanner').style.display = 'block';
+                    updateScanCounter();
+                    return;
+                }
+
                 if (!response.ok) {
                     const err = await response.json().catch(() => ({}));
                     throw new Error(err.detail || `Server error: ${response.status}`);
@@ -712,6 +1104,7 @@
 
                 const data = await response.json();
                 renderResults(data);
+                updateScanCounter();
 
             } catch (err) {
                 showError(`Something went wrong: ${err.message}. Please try again.`);
@@ -746,7 +1139,7 @@
             card.className = 'verdict-card';
 
             const safetyConfig = {
-                safe: { emoji: '✅', label: 'All Clear!', class: 'safe' },
+                safe: { emoji: '✅', label: 'All Clear', class: 'safe' },
                 caution: { emoji: '⚠️', label: 'Use With Caution', class: 'caution' },
                 avoid: { emoji: '🚫', label: 'Not Recommended', class: 'avoid' },
                 unknown: { emoji: '❓', label: 'Uncertain', class: 'unknown' }
@@ -796,7 +1189,6 @@
             const safeListEl = document.getElementById('safeList');
             safeListEl.innerHTML = '';
 
-            // For text mode, parse input; for other modes, approximate from total - flagged
             let safeIngredients = [];
             if (currentMode === 'text') {
                 const allIngredients = document.getElementById('ingredientInput').value
@@ -838,7 +1230,7 @@
         }
 
         async function shareResults() {
-            const text = `I just scanned my product on BumpRadar! 🤰📡\nCheck if your products are pregnancy-safe too 👇\nhttps://bumpradar.app`;
+            const text = `I just scanned my product on BumpRadar!\nCheck if your products are pregnancy-safe too:\nhttps://bumpradar.app`;
             if (navigator.share) {
                 try { await navigator.share({ title: 'BumpRadar', text, url: 'https://bumpradar.app' }); }
                 catch (e) { fallbackCopy(text); }
@@ -848,8 +1240,8 @@
         function fallbackCopy(text) {
             navigator.clipboard.writeText(text).then(() => {
                 const btn = document.querySelector('.share-btn');
-                btn.textContent = '✅ Link Copied!';
-                setTimeout(() => btn.textContent = '📤 Share Results', 2000);
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Share Results', 2000);
             });
         }
 
@@ -873,66 +1265,6 @@
                 }
             } catch (e) { /* silent */ }
         }
-
-        // Handle 429 in scan
-        const _origScan = scanProduct;
-        scanProduct = async function() {
-            const btn = document.getElementById('scanBtn');
-            const errorMsg = document.getElementById('errorMsg');
-            errorMsg.classList.remove('visible');
-
-            let body = {};
-            if (currentMode === 'text') {
-                const input = document.getElementById('ingredientInput').value.trim();
-                if (!input || input.length < 3) { showError('Please paste an ingredient list first!'); return; }
-                body = { ingredient_text: input };
-            } else if (currentMode === 'barcode') {
-                const barcode = document.getElementById('barcodeInput').value.trim();
-                if (!barcode || barcode.length < 6) { showError('Please enter a valid barcode number!'); return; }
-                body = { barcode: barcode };
-            } else if (currentMode === 'photo') {
-                if (!selectedPhoto) { showError('Please take or upload a photo first!'); return; }
-                body = { image_base64: selectedPhoto };
-            }
-
-            btn.disabled = true;
-            btn.classList.add('loading');
-            const origText = btn.textContent;
-            btn.textContent = '🔍 Scanning...';
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-
-                if (response.status === 429) {
-                    const err = await response.json();
-                    const detail = err.detail || {};
-                    showError(detail.message || 'Daily scan limit reached! Upgrade for unlimited scans.');
-                    document.getElementById('premiumBanner').style.display = 'block';
-                    updateScanCounter();
-                    return;
-                }
-
-                if (!response.ok) {
-                    const err = await response.json().catch(() => ({}));
-                    throw new Error(err.detail || `Server error: ${response.status}`);
-                }
-
-                const data = await response.json();
-                renderResults(data);
-                updateScanCounter();
-
-            } catch (err) {
-                showError(`Something went wrong: ${err.message}. Please try again.`);
-            } finally {
-                btn.disabled = false;
-                btn.classList.remove('loading');
-                btn.textContent = origText;
-            }
-        };
 
         // Load counter on page load
         updateScanCounter();
