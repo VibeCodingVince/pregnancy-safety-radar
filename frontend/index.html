@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --safe: #5BA67A;
@@ -80,19 +81,6 @@
             position: relative;
         }
 
-        .header::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 20px;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-light), #F5D5E0);
-            opacity: 0.6;
-            z-index: -1;
-        }
-
         .logo {
             font-family: var(--font-display);
             font-size: 38px;
@@ -102,7 +90,19 @@
             line-height: 1;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 12px;
+        }
+
+        .logo-image {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
         }
 
         .logo-dot {
@@ -970,12 +970,136 @@
             border-radius: 2px;
             margin: 4px 0 0;
         }
+
+        /* ─── Milestone Celebration Modal ─── */
+        .milestone-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 245, 246, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .milestone-modal.visible {
+            display: flex;
+        }
+
+        .milestone-content {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 48px 32px;
+            text-align: center;
+            max-width: 400px;
+            margin: 20px;
+            box-shadow: 0 8px 32px rgba(212, 112, 143, 0.3);
+            border: 2px solid var(--accent);
+            position: relative;
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .milestone-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+            animation: rotate 0.6s ease-out;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(-180deg) scale(0); }
+            to { transform: rotate(0deg) scale(1); }
+        }
+
+        .milestone-title {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .milestone-message {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-weight: 300;
+        }
+
+        .milestone-close {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, var(--accent), #E8A4BE);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .milestone-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 112, 143, 0.35);
+        }
+
+        /* ─── Supportive Message Banner ─── */
+        .supportive-message {
+            background: linear-gradient(135deg, var(--accent-light), #FCE8EB);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .supportive-message.visible {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .supportive-message-text {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text);
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .supportive-message-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
             <div class="logo">
+                <img src="logo.png" alt="BumpRadar Logo" class="logo-image">
                 BumpRadar<span class="logo-dot"></span>
             </div>
             <div class="deco-line"></div>
@@ -984,6 +1108,10 @@
 
         <!-- Scan Mode Tabs -->
         <div class="scan-tabs" id="scanTabs">
+            <button class="scan-tab active" data-mode="photo" onclick="switchTab('photo')">
+                <span class="scan-tab-icon">📸</span>
+                Photo
+            </button>
             <button class="scan-tab" data-mode="text" onclick="switchTab('text')">
                 <span class="scan-tab-icon">📝</span>
                 Paste
@@ -991,10 +1119,6 @@
             <button class="scan-tab" data-mode="barcode" onclick="switchTab('barcode')">
                 <span class="scan-tab-icon">📊</span>
                 Barcode
-            </button>
-            <button class="scan-tab active" data-mode="photo" onclick="switchTab('photo')">
-                <span class="scan-tab-icon">📸</span>
-                Photo
             </button>
         </div>
 
@@ -1072,6 +1196,12 @@
 
         <!-- Results -->
         <div class="results" id="results">
+            <!-- Supportive Message for Flagged Products -->
+            <div class="supportive-message" id="supportiveMessage">
+                <span class="supportive-message-icon" id="supportiveIcon"></span>
+                <div class="supportive-message-text" id="supportiveText"></div>
+            </div>
+
             <div class="verdict-card" id="verdictCard">
                 <div class="product-info" id="productInfo" style="display:none">
                     <div class="product-name" id="productName"></div>
@@ -1122,6 +1252,16 @@
         </footer>
     </div>
 
+    <!-- Milestone Celebration Modal -->
+    <div class="milestone-modal" id="milestoneModal">
+        <div class="milestone-content">
+            <span class="milestone-icon" id="milestoneIcon"></span>
+            <div class="milestone-title" id="milestoneTitle"></div>
+            <div class="milestone-message" id="milestoneMessage"></div>
+            <button class="milestone-close" onclick="closeMilestone()">Keep Scanning!</button>
+        </div>
+    </div>
+
     <script>
         // Auto-detect API URL based on current host
         const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -1131,6 +1271,7 @@
         let currentMode = 'photo';
         let selectedPhoto = null;
         let loadingMessageInterval = null;
+        let totalScans = parseInt(localStorage.getItem('bumpradar_total_scans') || '0');
 
         const ENCOURAGING_MESSAGES = [
             "You're doing great, mama 💗",
@@ -1151,6 +1292,32 @@
             skincare: 'Water, Glycerin, Retinol, Niacinamide, Hyaluronic Acid, Fragrance, Methylparaben, Dimethicone, Phenoxyethanol',
             sunscreen: 'Water, Oxybenzone, Octinoxate, Avobenzone, Homosalate, Glycerin, Dimethicone, Vitamin E, Fragrance',
             safe: 'Water, Glycerin, Hyaluronic Acid, Niacinamide, Ceramides, Squalane, Vitamin C, Zinc Oxide, Shea Butter, Aloe Vera'
+        };
+
+        const SUPPORTIVE_MESSAGES = {
+            avoid: [
+                "💪 You're making the tough but right choice, mama!",
+                "🌟 Your awareness is protecting your little one!",
+                "💗 Smart mama! Better safe than sorry.",
+                "✨ You caught that! Your baby is lucky to have you.",
+                "🤱 Trust your instincts - you're doing amazing!"
+            ],
+            caution: [
+                "👀 Good eye! Knowledge is power, mama.",
+                "💡 You're learning and growing - just like your baby!",
+                "🌸 Being informed makes you a great mom.",
+                "💝 Every scan makes you more confident!",
+                "🦋 You're building a safer world for your bump!"
+            ]
+        };
+
+        const MILESTONES = {
+            1: { icon: '🎉', title: 'First Scan!', message: 'Welcome to BumpRadar, mama! You\'re already protecting your bump.' },
+            5: { icon: '⭐', title: 'High Five!', message: '5 products scanned! You\'re becoming a safety pro!' },
+            10: { icon: '🏆', title: 'Safety Scout!', message: '10 scans completed! Your bump is in great hands!' },
+            25: { icon: '💎', title: 'Quarter Century!', message: '25 products protected! You\'re a vigilant mama!' },
+            50: { icon: '👑', title: 'Safety Queen!', message: '50 scans! You\'re officially a BumpRadar expert!' },
+            100: { icon: '🌟', title: 'Century Club!', message: '100 products scanned! You\'re a legend, mama!' }
         };
 
         // Tab switching
@@ -1363,6 +1530,99 @@
             }
         }
 
+        // Confetti celebrations
+        function celebrateSafe() {
+            const duration = 3 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10002 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+
+                // Pink and rose confetti colors
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#D4708F', '#E8A4BE', '#FCEEF3', '#F5D5E0', '#5BA67A']
+                }));
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#D4708F', '#E8A4BE', '#FCEEF3', '#F5D5E0', '#5BA67A']
+                }));
+            }, 250);
+        }
+
+        function celebrateMilestone() {
+            // Extra epic confetti for milestones
+            const count = 200;
+            const defaults = {
+                origin: { y: 0.7 },
+                zIndex: 10002,
+                colors: ['#D4708F', '#E8A4BE', '#FCEEF3', '#F5D5E0', '#5BA67A', '#FFD700']
+            };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+
+        function showSupportiveMessage(safetyLevel) {
+            const messageEl = document.getElementById('supportiveMessage');
+            const iconEl = document.getElementById('supportiveIcon');
+            const textEl = document.getElementById('supportiveText');
+
+            if (safetyLevel === 'avoid' || safetyLevel === 'caution') {
+                const messages = SUPPORTIVE_MESSAGES[safetyLevel];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+                iconEl.textContent = safetyLevel === 'avoid' ? '💪' : '👀';
+                textEl.textContent = randomMessage;
+                messageEl.classList.add('visible');
+            } else {
+                messageEl.classList.remove('visible');
+            }
+        }
+
+        function checkMilestone() {
+            if (MILESTONES[totalScans]) {
+                const milestone = MILESTONES[totalScans];
+                document.getElementById('milestoneIcon').textContent = milestone.icon;
+                document.getElementById('milestoneTitle').textContent = milestone.title;
+                document.getElementById('milestoneMessage').textContent = milestone.message;
+                document.getElementById('milestoneModal').classList.add('visible');
+                celebrateMilestone();
+            }
+        }
+
+        function closeMilestone() {
+            document.getElementById('milestoneModal').classList.remove('visible');
+        }
+
+        function incrementScanCount() {
+            totalScans++;
+            localStorage.setItem('bumpradar_total_scans', totalScans.toString());
+            checkMilestone();
+        }
+
         function renderResults(data) {
             const results = document.getElementById('results');
             const inputSection = document.getElementById('inputSection');
@@ -1371,6 +1631,17 @@
             inputSection.style.display = 'none';
             scanTabs.style.display = 'none';
             results.classList.add('visible');
+
+            // Increment scan count and check for milestones
+            incrementScanCount();
+
+            // Show celebrations and supportive messages based on safety level
+            showSupportiveMessage(data.overall_safety);
+
+            // Trigger confetti for safe products
+            if (data.overall_safety === 'safe') {
+                setTimeout(() => celebrateSafe(), 600); // Delay for card animation
+            }
 
             // Product info
             const productInfo = document.getElementById('productInfo');
@@ -1474,6 +1745,7 @@
             document.getElementById('barcodeInput').value = '';
             removePhoto();
             document.getElementById('errorMsg').classList.remove('visible');
+            document.getElementById('supportiveMessage').classList.remove('visible');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
