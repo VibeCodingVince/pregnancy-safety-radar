@@ -15,13 +15,21 @@ When the user says "end session":
 ## Project Structure
 - `backend/` - Python backend with FastAPI
   - `app/agents/` - Agent modules: orchestrator, safety_classifier, ocr_agent, product_scanner, qa_agent, research_agent
-  - `app/api/v1/endpoints/` - API endpoints: scan, admin
+  - `app/api/v1/endpoints/` - API endpoints: scan, admin, payments
   - `app/core/` - Core functionality including rate_limit.py
+  - `app/models/subscriber.py` - Premium subscriber tracking model
 - `frontend/` - Frontend application with server.py
 - `skills/` - Custom Claude skills (frontend-design)
 - `.claude-plugin/` - Claude plugin configuration
 
-## Recent Updates (as of 2026-03-19)
+## Recent Updates (as of 2026-03-21)
+- **Stripe Payments MVP**: Email-only identification + Stripe Checkout hosted page
+  - Endpoints: create-checkout, webhook, status, portal (`backend/app/api/v1/endpoints/payments.py`)
+  - Subscriber model tracks premium users by email (`backend/app/models/subscriber.py`)
+  - Rate limiting re-enabled: 3 scans/day free, unlimited premium
+  - Scan endpoint reads `X-User-Email` header for premium bypass
+  - Frontend: email modal, checkout redirect, "Go Pro" header button, premium banner
+  - Requires Stripe keys in `backend/.env`: `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID`, `FRONTEND_URL`
 - Multi-agent system implemented: OCR, product scanner, QA, and research agents
 - Enhanced orchestrator for coordinating agents
 - Rate limiting system added
