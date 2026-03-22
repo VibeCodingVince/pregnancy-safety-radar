@@ -72,7 +72,17 @@ async def scan_product(
     )
 
     if not allowed:
-        if is_premium and is_photo:
+        if not is_premium and is_photo:
+            # Free user trying photo scan — this is a Pro feature
+            raise HTTPException(
+                status_code=403,
+                detail={
+                    "message": "Photo scanning is a Pro feature. Upgrade to BumpRadar Premium for $9.99/mo to unlock photo scans, or paste your ingredients as text for free!",
+                    "photo_pro_only": True,
+                    "is_premium": False,
+                },
+            )
+        elif is_premium and is_photo:
             message = "Daily photo scan limit reached (5/day). Try pasting ingredients as text instead!"
         elif is_premium:
             message = "Daily scan limit reached (20/day). Your limit resets tomorrow!"

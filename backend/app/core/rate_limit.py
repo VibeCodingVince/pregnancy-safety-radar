@@ -1,15 +1,17 @@
 """
 Rate limiting / freemium scan counter
 Tracks scans per IP (free) or email (premium) per day.
-Free: 3 scans/day. Premium: 20 scans/day (5 photo max).
+Free: 3 text/barcode scans/day (NO photo scans — Pro only).
+Premium: 20 scans/day (5 photo max).
 
 Cost math (worst case, all users max out daily):
-  Photo scan (GPT-4o-mini Vision): ~$0.03 each
-  5 photos/day x 30 days = $4.50/month
-  Text/barcode scans: ~$0 (cached DB lookups)
+  Free users: $0 (text/barcode only, DB lookups + occasional AI classify)
+  Photo scan (GPT-4o-mini Vision): ~$0.03 each — PREMIUM ONLY
+  5 photos/day x 30 days = $4.50/month per premium user
   Stripe fee on $9.99: $0.59
   Net revenue: $9.99 - $0.59 = $9.40
-  Guaranteed profit per user: $9.40 - $4.50 = $4.90/month minimum
+  Guaranteed profit per premium user: $9.40 - $4.50 = $4.90/month minimum
+  Free users can NEVER cost more than pennies (AI classify fallback only).
 """
 import time
 from collections import defaultdict
@@ -63,6 +65,10 @@ def check_scan_limit(
             remaining = 0
 
         return allowed, remaining, total_today
+
+    # Free users: photo scans are BLOCKED (Pro only)
+    if is_photo:
+        return False, 0, total_today
 
     remaining = max(0, FREE_SCANS_PER_DAY - total_today)
     allowed = total_today < FREE_SCANS_PER_DAY

@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.agents.base import BaseAgent
 from app.core.config import settings
+from app.core.cost_guard import can_make_api_call, record_api_call
 
 try:
     import openai
@@ -66,6 +67,17 @@ class OCRAgent(BaseAgent):
                 "product_name": None,
                 "confidence": 0.0,
                 "error": "Invalid image data. Please provide a clear photo of the ingredient list.",
+            }
+
+        # Global cost circuit breaker
+        if not can_make_api_call():
+            self.log_error("Daily API budget exhausted — blocking Vision call")
+            return {
+                "success": False,
+                "ingredient_text": None,
+                "product_name": None,
+                "confidence": 0.0,
+                "error": "Our photo scanning service is temporarily at capacity. Please try again tomorrow or paste your ingredients as text instead.",
             }
 
         return self._extract_with_vision(image_base64)
@@ -165,6 +177,7 @@ If you cannot find an ingredient list in the image, respond:
                 max_tokens=2000,
             )
 
+            record_api_call()
             content = response.choices[0].message.content.strip()
 
             # Strip markdown code fences if present

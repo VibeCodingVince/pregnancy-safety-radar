@@ -381,6 +381,65 @@
 
         .photo-preview-remove:hover { transform: scale(1.1) rotate(90deg); }
 
+        /* ─── Pro Badge on Photo Tab ─── */
+        .pro-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E8A4BE, #D4849E);
+            color: #fff;
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-left: 4px;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+
+        /* ─── Photo Pro Gate ─── */
+        .photo-pro-gate {
+            text-align: center;
+            padding: 32px 16px;
+        }
+        .photo-pro-gate-icon { font-size: 48px; margin-bottom: 12px; }
+        .photo-pro-gate-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .photo-pro-gate-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .photo-pro-gate-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent), #E8A4BE);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .photo-pro-gate-btn:hover { opacity: 0.9; }
+        .photo-pro-gate-text-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .photo-pro-gate-text-btn:hover { border-color: var(--accent); color: var(--accent); }
+
         /* ─── Scan Button ─── */
         .scan-btn {
             width: 100%;
@@ -1373,11 +1432,11 @@
 
         <!-- Scan Mode Tabs -->
         <div class="scan-tabs" id="scanTabs">
-            <button class="scan-tab active" data-mode="photo" onclick="switchTab('photo')">
+            <button class="scan-tab" data-mode="photo" onclick="switchTab('photo')">
                 <span class="scan-tab-icon">📸</span>
-                Photo
+                Photo <span class="pro-badge" id="photoProBadge">PRO</span>
             </button>
-            <button class="scan-tab" data-mode="text" onclick="switchTab('text')">
+            <button class="scan-tab active" data-mode="text" onclick="switchTab('text')">
                 <span class="scan-tab-icon">📝</span>
                 Paste
             </button>
@@ -1391,7 +1450,7 @@
         <div class="input-section" id="inputSection">
 
             <!-- Text Panel -->
-            <div class="scan-panel" id="panel-text">
+            <div class="scan-panel active" id="panel-text">
                 <label class="input-label">Paste your ingredients</label>
                 <p class="input-hint">Copy the ingredient list from the product label or website.</p>
                 <textarea
@@ -1421,23 +1480,34 @@
             </div>
 
             <!-- Photo Panel -->
-            <div class="scan-panel active" id="panel-photo">
-                <label class="input-label">Snap the ingredient list</label>
-                <p class="input-hint">Take a photo of the product's ingredient list. Make sure the text is clear and well-lit.</p>
-                <div class="photo-upload" id="photoUpload">
-                    <span class="photo-upload-icon">📷</span>
-                    <div class="photo-upload-text">Tap to upload or take a photo</div>
-                    <div class="photo-upload-hint">JPEG, PNG, or WebP — max 10MB</div>
-                    <input type="file" id="photoInput" accept="image/*" capture="environment">
+            <div class="scan-panel" id="panel-photo">
+                <!-- Pro-only gate (shown to free users) -->
+                <div class="photo-pro-gate" id="photoProGate">
+                    <div class="photo-pro-gate-icon">📸</div>
+                    <div class="photo-pro-gate-title">Photo Scanning is a Pro Feature</div>
+                    <p class="photo-pro-gate-desc">Upgrade to instantly scan ingredient lists from photos. Free users can paste ingredients as text.</p>
+                    <button class="photo-pro-gate-btn" onclick="startCheckout()">Upgrade to Pro — $9.99/mo</button>
+                    <button class="photo-pro-gate-text-btn" onclick="switchTab('text')">Paste ingredients instead (free)</button>
                 </div>
-                <div class="photo-preview" id="photoPreview">
-                    <img id="photoPreviewImg" alt="Photo preview">
-                    <button class="photo-preview-remove" onclick="removePhoto()">✕</button>
+                <!-- Photo upload (shown to premium users) -->
+                <div id="photoUploadArea" style="display:none">
+                    <label class="input-label">Snap the ingredient list</label>
+                    <p class="input-hint">Take a photo of the product's ingredient list. Make sure the text is clear and well-lit.</p>
+                    <div class="photo-upload" id="photoUpload">
+                        <span class="photo-upload-icon">📷</span>
+                        <div class="photo-upload-text">Tap to upload or take a photo</div>
+                        <div class="photo-upload-hint">JPEG, PNG, or WebP — max 10MB</div>
+                        <input type="file" id="photoInput" accept="image/*" capture="environment">
+                    </div>
+                    <div class="photo-preview" id="photoPreview">
+                        <img id="photoPreviewImg" alt="Photo preview">
+                        <button class="photo-preview-remove" onclick="removePhoto()">✕</button>
+                    </div>
                 </div>
             </div>
 
             <button class="scan-btn" id="scanBtn" onclick="scanProduct()">
-                Analyze Photo
+                Scan Ingredients
             </button>
         </div>
 
@@ -1562,7 +1632,7 @@
             ? 'http://localhost:8000'
             : `http://${window.location.hostname}:8000`;
         const API_URL = `${API_BASE}/api/v1/scan/`;
-        let currentMode = 'photo';
+        let currentMode = 'text';
         let selectedPhoto = null;
         let loadingMessageInterval = null;
         let totalScans = parseInt(localStorage.getItem('bumpradar_total_scans') || '0');
@@ -1838,6 +1908,10 @@
             } else {
                 counterEl.innerHTML = '<span class="premium-active-badge">✦ Premium</span> 20 scans/day';
             }
+            // Unlock photo scanning for premium users
+            document.getElementById('photoProGate').style.display = 'none';
+            document.getElementById('photoUploadArea').style.display = 'block';
+            document.getElementById('photoProBadge').style.display = 'none';
         }
 
         async function openManageSubscription() {
@@ -2120,6 +2194,18 @@
                     headers: getAuthHeaders(),
                     body: JSON.stringify(body)
                 });
+
+                if (response.status === 403) {
+                    const err = await response.json();
+                    const detail = err.detail || {};
+                    if (detail.photo_pro_only) {
+                        showError(detail.message || 'Photo scanning is a Pro feature.');
+                        switchTab('text');
+                    } else {
+                        showError(detail.message || 'Access denied.');
+                    }
+                    return;
+                }
 
                 if (response.status === 429) {
                     const err = await response.json();

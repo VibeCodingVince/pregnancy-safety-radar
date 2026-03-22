@@ -13,6 +13,7 @@ from app.models.ingredient import Ingredient, IngredientAlias
 from app.models.enums import SafetyLevel
 from app.schemas.scan import ScanResponse, FlaggedIngredient
 from app.core.config import settings
+from app.core.cost_guard import can_make_api_call, record_api_call
 
 # Only import openai if key is available
 try:
@@ -164,6 +165,19 @@ class SafetyClassifierAgent(BaseAgent):
                 for name in unknowns
             ]
 
+        # Global cost circuit breaker
+        if not can_make_api_call():
+            self.log_warning("Daily API budget exhausted — skipping AI classify")
+            return [
+                FlaggedIngredient(
+                    name=name,
+                    safety_level=SafetyLevel.UNKNOWN,
+                    why_flagged="Service at capacity — could not classify. Try again tomorrow.",
+                    confidence=0.0,
+                )
+                for name in unknowns
+            ]
+
         client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
         prompt = f"""You are a pregnancy safety expert. Classify each ingredient for safety during pregnancy.
@@ -192,6 +206,7 @@ Respond with ONLY a valid JSON array, no markdown formatting."""
                 max_tokens=2000,
             )
 
+            record_api_call()
             content = response.choices[0].message.content.strip()
             # Strip markdown code fences if present
             content = re.sub(r'^```json\s*', '', content)
