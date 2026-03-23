@@ -734,6 +734,157 @@
         }
         .flagged-alternative::before { content: '\2192  Try instead: '; }
 
+        .flagged-category {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(0,0,0,0.06);
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .flagged-description {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            font-style: italic;
+            margin-bottom: 4px;
+            opacity: 0.85;
+        }
+
+        .alt-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.08); }
+        .alt-chips::before { content: '\2192  Try instead:'; font-size: 12px; color: var(--safe); font-weight: 600; display: flex; align-items: center; margin-right: 4px; }
+        .alt-chip {
+            background: var(--safe-bg);
+            color: var(--safe);
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid var(--safe-border);
+        }
+
+        .source-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            margin-left: 6px;
+        }
+        .source-badge.db { background: #e8f5e9; color: #388e3c; }
+        .source-badge.ai { background: #fff3e0; color: #e65100; }
+
+        .confidence-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-top: 12px;
+        }
+        .confidence-badge .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+        .confidence-badge .dot.high { background: var(--safe); }
+        .confidence-badge .dot.moderate { background: var(--caution); }
+
+        .product-image-row { display: flex; align-items: center; gap: 14px; }
+        .product-thumb {
+            width: 72px;
+            height: 72px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+            background: #f5f5f5;
+        }
+
+        /* ─── Safe Ingredient Cards ─── */
+        .safe-card {
+            background: var(--safe-bg);
+            border: 1px solid var(--safe-border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        .safe-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(90,143,101,0.12); }
+        .safe-card-name { font-weight: 600; font-size: 13px; color: var(--safe); }
+        .safe-card-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 300; }
+        .safe-card-cat { font-size: 9px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); opacity: 0.7; margin-top: 3px; }
+        .safe-cards-grid { display: flex; flex-direction: column; gap: 8px; }
+        .safe-toggle-btn {
+            background: none;
+            border: 1px solid var(--safe-border);
+            color: var(--safe);
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .safe-toggle-btn:hover { background: var(--safe-bg); }
+
+        /* ─── Feedback Section ─── */
+        .feedback-section {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            box-shadow: 0 2px 20px rgba(45,42,38,0.06);
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .feedback-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text); }
+        .feedback-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .feedback-btn {
+            background: rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .feedback-btn:hover { background: rgba(0,0,0,0.08); transform: translateY(-1px); }
+        .feedback-btn.selected { border-color: var(--accent); background: rgba(212,112,143,0.08); }
+        .feedback-textarea {
+            width: 100%;
+            min-height: 60px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-family: var(--font-body);
+            resize: vertical;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.8);
+        }
+        .feedback-textarea:focus { outline: none; border-color: var(--accent); }
+        .feedback-submit {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .feedback-submit:hover { opacity: 0.9; }
+        .feedback-thanks { color: var(--safe); font-weight: 600; font-size: 14px; padding: 12px 0; }
+
         /* ─── Safe List ─── */
         .safe-section {
             background: var(--card);
@@ -2106,8 +2257,13 @@
 
             <div class="verdict-card" id="verdictCard">
                 <div class="product-info" id="productInfo" style="display:none">
-                    <div class="product-name" id="productName"></div>
-                    <div class="product-brand" id="productBrand"></div>
+                    <div class="product-image-row">
+                        <img class="product-thumb" id="productThumb" style="display:none" alt="Product" />
+                        <div>
+                            <div class="product-name" id="productName"></div>
+                            <div class="product-brand" id="productBrand"></div>
+                        </div>
+                    </div>
                 </div>
                 <span class="verdict-emoji" id="verdictEmoji"></span>
                 <div class="verdict-label" id="verdictLabel"></div>
@@ -2124,6 +2280,20 @@
             <div class="safe-section" id="safeSection">
                 <div class="safe-title">&#9989; Safe Ingredients</div>
                 <div class="safe-list" id="safeList"></div>
+            </div>
+
+            <div class="feedback-section" id="feedbackSection">
+                <div class="feedback-title">How was this scan?</div>
+                <div class="feedback-buttons" id="feedbackButtons">
+                    <button class="feedback-btn" data-rating="helpful" onclick="submitFeedback('helpful', this)">&#128077; Helpful</button>
+                    <button class="feedback-btn" data-rating="not_helpful" onclick="submitFeedback('not_helpful', this)">&#128078; Not helpful</button>
+                    <button class="feedback-btn" data-rating="suggestion" onclick="submitFeedback('suggestion', this)">&#128161; Suggestion</button>
+                </div>
+                <div id="feedbackExpanded" style="display:none">
+                    <textarea class="feedback-textarea" id="feedbackComment" placeholder="Tell us how we can improve..."></textarea>
+                    <button class="feedback-submit" onclick="sendFeedbackComment()">Send Feedback</button>
+                </div>
+                <div class="feedback-thanks" id="feedbackThanks" style="display:none">Thanks for your feedback!</div>
             </div>
 
             <button class="share-btn" onclick="shareResults()">Share Results</button>
@@ -3334,6 +3504,7 @@
         }
 
         function renderResults(data) {
+            lastScanData = data;
             const results = document.getElementById('results');
             const inputSection = document.getElementById('inputSection');
             const scanTabs = document.getElementById('scanTabs');
@@ -3363,14 +3534,23 @@
                 setTimeout(() => celebrateSafe(), 600); // Delay for card animation
             }
 
-            // Product info
+            // Product info with image
             const productInfo = document.getElementById('productInfo');
+            const productThumb = document.getElementById('productThumb');
             if (data.product_name) {
                 document.getElementById('productName').textContent = data.product_name;
                 document.getElementById('productBrand').textContent = data.product_brand || '';
+                if (data.product_image_url) {
+                    productThumb.src = data.product_image_url;
+                    productThumb.style.display = 'block';
+                    productThumb.onerror = () => { productThumb.style.display = 'none'; };
+                } else {
+                    productThumb.style.display = 'none';
+                }
                 productInfo.style.display = 'block';
             } else {
                 productInfo.style.display = 'none';
+                productThumb.style.display = 'none';
             }
 
             // Verdict card
@@ -3393,11 +3573,17 @@
             // Stats
             const safeCount = data.total_ingredients_analyzed - data.flagged_ingredients.length;
             const flaggedCount = data.flagged_ingredients.length;
+            const confLevel = data.confidence >= 0.9 ? 'high' : 'moderate';
+            const confLabel = data.confidence >= 0.9 ? 'High confidence' : 'Moderate confidence';
             document.getElementById('verdictStats').innerHTML = `
                 <div class="stat"><div class="stat-number" style="color:var(--safe)">${safeCount}</div><div class="stat-label">Safe</div></div>
                 <div class="stat"><div class="stat-number" style="color:var(--caution)">${flaggedCount}</div><div class="stat-label">Flagged</div></div>
                 <div class="stat"><div class="stat-number">${data.total_ingredients_analyzed}</div><div class="stat-label">Total</div></div>
             `;
+            // Confidence badge below stats
+            document.getElementById('verdictStats').insertAdjacentHTML('afterend',
+                `<div class="confidence-badge"><span class="dot ${confLevel}"></span> ${confLabel} analysis</div>`
+            );
 
             // Flagged ingredients
             const flaggedSection = document.getElementById('flaggedSection');
@@ -3413,25 +3599,47 @@
                     item.className = `flagged-item ${ing.safety_level}`;
                     const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
                     const safeLevel = esc(ing.safety_level || '');
+                    const conf = ing.confidence || 0;
+                    const sourceBadge = conf >= 0.95
+                        ? '<span class="source-badge db">Medical DB</span>'
+                        : '<span class="source-badge ai">AI-Verified</span>';
+                    const categoryPill = ing.category
+                        ? `<span class="flagged-category">${esc(ing.category)}</span>`
+                        : '';
+                    const descLine = ing.description
+                        ? `<div class="flagged-description">${esc(ing.description)}</div>`
+                        : '';
+                    // Build alternative chips
+                    let altHtml = '';
+                    if (ing.safe_alternatives) {
+                        const alts = ing.safe_alternatives.split(',').map(a => a.trim()).filter(a => a);
+                        if (alts.length > 0) {
+                            altHtml = '<div class="alt-chips">' + alts.map(a => `<span class="alt-chip">${esc(a)}</span>`).join('') + '</div>';
+                        }
+                    }
                     item.innerHTML = `
                         <div class="flagged-item-header">
-                            <span class="flagged-name">${esc(ing.name || '')}</span>
+                            <span class="flagged-name">${esc(ing.name || '')}${categoryPill}${sourceBadge}</span>
                             <span class="flagged-badge ${safeLevel}">${safeLevel}</span>
                         </div>
+                        ${descLine}
                         ${ing.why_flagged ? `<div class="flagged-reason">${esc(ing.why_flagged)}</div>` : ''}
-                        ${ing.safe_alternatives ? `<div class="flagged-alternative">${esc(ing.safe_alternatives)}</div>` : ''}
+                        ${altHtml}
                     `;
                     flaggedList.appendChild(item);
                 });
             }
 
-            // Safe ingredients
+            // Safe ingredients — use backend safe_ingredients if available, fallback to text parsing
             const safeSection = document.getElementById('safeSection');
             const safeListEl = document.getElementById('safeList');
             safeListEl.innerHTML = '';
 
-            let safeIngredients = [];
-            if (currentMode === 'text') {
+            const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+            let safeIngredients = data.safe_ingredients || [];
+
+            // Fallback: parse from text input if backend didn't return safe_ingredients
+            if (safeIngredients.length === 0 && currentMode === 'text') {
                 const allIngredients = document.getElementById('ingredientInput').value
                     .split(/[,;\n]/).map(s => s.trim()).filter(s => s.length > 1);
                 const flaggedNames = new Set(data.flagged_ingredients.map(i => i.name.toLowerCase()));
@@ -3441,25 +3649,124 @@
                         name.toLowerCase().includes(f.name.toLowerCase()) ||
                         f.name.toLowerCase().includes(name.toLowerCase())
                     )
-                );
+                ).map(name => ({ name, safety_level: 'safe' }));
             }
 
             if (safeIngredients.length === 0) {
                 safeSection.style.display = 'none';
             } else {
                 safeSection.style.display = 'block';
-                safeIngredients.forEach(name => {
-                    const chip = document.createElement('span');
-                    chip.className = 'safe-chip';
-                    chip.textContent = name;
-                    safeListEl.appendChild(chip);
-                });
+                const hasRichData = safeIngredients.some(i => i.description || i.category);
+
+                if (hasRichData) {
+                    // Rich card layout
+                    const grid = document.createElement('div');
+                    grid.className = 'safe-cards-grid';
+                    const showInitially = 8;
+                    safeIngredients.forEach((ing, idx) => {
+                        const card = document.createElement('div');
+                        card.className = 'safe-card';
+                        if (idx >= showInitially) card.style.display = 'none';
+                        card.setAttribute('data-safe-card', '');
+                        const name = typeof ing === 'string' ? ing : (ing.name || '');
+                        const desc = ing.description || '';
+                        const cat = ing.category || '';
+                        card.innerHTML = `
+                            <div class="safe-card-name">${esc(name)}</div>
+                            ${desc ? `<div class="safe-card-desc">${esc(desc)}</div>` : ''}
+                            ${cat ? `<div class="safe-card-cat">${esc(cat)}</div>` : ''}
+                        `;
+                        grid.appendChild(card);
+                    });
+                    safeListEl.appendChild(grid);
+
+                    if (safeIngredients.length > showInitially) {
+                        const toggleBtn = document.createElement('button');
+                        toggleBtn.className = 'safe-toggle-btn';
+                        toggleBtn.textContent = `Show all ${safeIngredients.length} ingredients`;
+                        let expanded = false;
+                        toggleBtn.onclick = () => {
+                            expanded = !expanded;
+                            grid.querySelectorAll('[data-safe-card]').forEach((c, i) => {
+                                if (i >= showInitially) c.style.display = expanded ? '' : 'none';
+                            });
+                            toggleBtn.textContent = expanded ? 'Show less' : `Show all ${safeIngredients.length} ingredients`;
+                        };
+                        safeListEl.appendChild(toggleBtn);
+                    }
+                } else {
+                    // Simple chip layout (fallback)
+                    safeIngredients.forEach(ing => {
+                        const chip = document.createElement('span');
+                        chip.className = 'safe-chip';
+                        chip.textContent = typeof ing === 'string' ? ing : (ing.name || '');
+                        safeListEl.appendChild(chip);
+                    });
+                }
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // ─── Feedback Functions ───
+        let lastScanData = null;
+        let selectedRating = null;
+
+        function submitFeedback(rating, btn) {
+            selectedRating = rating;
+            // Highlight selected button
+            document.querySelectorAll('.feedback-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            if (rating === 'helpful') {
+                // Quick positive — send immediately
+                sendFeedbackToServer(rating, null);
+                document.getElementById('feedbackButtons').style.display = 'none';
+                document.getElementById('feedbackExpanded').style.display = 'none';
+                document.getElementById('feedbackThanks').style.display = 'block';
+            } else {
+                // Show textarea for comment
+                document.getElementById('feedbackExpanded').style.display = 'block';
+            }
+        }
+
+        function sendFeedbackComment() {
+            const comment = document.getElementById('feedbackComment').value.trim();
+            sendFeedbackToServer(selectedRating, comment);
+            document.getElementById('feedbackButtons').style.display = 'none';
+            document.getElementById('feedbackExpanded').style.display = 'none';
+            document.getElementById('feedbackThanks').style.display = 'block';
+        }
+
+        async function sendFeedbackToServer(rating, comment) {
+            try {
+                const body = {
+                    rating,
+                    comment: comment || null,
+                    product_name: lastScanData?.product_name || null,
+                    overall_safety: lastScanData?.overall_safety || null,
+                };
+                const headers = { 'Content-Type': 'application/json' };
+                const token = getAuthToken();
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+                await fetch(`${API_BASE}/api/v1/scan/feedback`, { method: 'POST', headers, body: JSON.stringify(body) });
+            } catch (e) { /* silent — feedback is best-effort */ }
+        }
+
+        function resetFeedback() {
+            selectedRating = null;
+            document.getElementById('feedbackButtons').style.display = 'flex';
+            document.getElementById('feedbackExpanded').style.display = 'none';
+            document.getElementById('feedbackThanks').style.display = 'none';
+            document.getElementById('feedbackComment').value = '';
+            document.querySelectorAll('.feedback-btn').forEach(b => b.classList.remove('selected'));
+        }
+
         function scanAgain() {
+            resetFeedback();
+            // Remove dynamically inserted confidence badge
+            const cb = document.querySelector('.confidence-badge');
+            if (cb) cb.remove();
             document.getElementById('results').classList.remove('visible');
             document.getElementById('inputSection').style.display = 'block';
             document.getElementById('scanTabs').style.display = 'flex';

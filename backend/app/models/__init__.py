@@ -9,6 +9,7 @@ from app.models.safety_classification import SafetyClassification
 from app.models.subscriber import Subscriber
 from app.models.user import User
 from app.models.scan_history import ScanHistory
+from app.models.feedback import Feedback
 
 __all__ = [
     # Enums
@@ -24,4 +25,5 @@ __all__ = [
     "Subscriber",
     "User",
     "ScanHistory",
+    "Feedback",
 ]

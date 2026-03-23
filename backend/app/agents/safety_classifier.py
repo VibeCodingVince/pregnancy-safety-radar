@@ -143,6 +143,7 @@ class SafetyClassifierAgent(BaseAgent):
             name=ingredient.name,
             safety_level=SafetyLevel(ingredient.safety_level),
             category=ingredient.category,
+            description=ingredient.description,
             why_flagged=ingredient.why_flagged,
             safe_alternatives=ingredient.safe_alternatives,
             confidence=ingredient.confidence_score or 1.0,
@@ -294,8 +295,9 @@ Respond with ONLY a valid JSON array, no markdown formatting."""
         worst = min(classified, key=lambda x: self.SAFETY_PRIORITY.get(x.safety_level, 99))
         overall = worst.safety_level
 
-        # Filter to only flagged (non-safe) ingredients for the response
+        # Separate flagged (non-safe) and safe ingredients
         flagged = [i for i in classified if i.safety_level != SafetyLevel.SAFE]
+        safe = [i for i in classified if i.safety_level == SafetyLevel.SAFE]
 
         # Count by level
         avoid_count = sum(1 for i in classified if i.safety_level == SafetyLevel.AVOID)
@@ -324,6 +326,7 @@ Respond with ONLY a valid JSON array, no markdown formatting."""
             overall_safety=overall,
             verdict_message=verdict,
             flagged_ingredients=flagged,
+            safe_ingredients=safe,
             total_ingredients_analyzed=total_count,
             confidence=round(avg_confidence, 2),
         )

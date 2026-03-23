@@ -68,6 +68,7 @@ class OrchestratorAgent(BaseAgent):
         # Add product metadata
         scan_result.product_name = result.get("product_name")
         scan_result.product_brand = result.get("brand")
+        scan_result.product_image_url = result.get("image_url")
 
         return scan_result
 

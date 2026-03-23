@@ -6,6 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from typing import Optional
 
+from pydantic import BaseModel
+
 from app.core.database import get_db
 from app.core.rate_limit import check_scan_limit, record_scan, get_scan_info, TIER_LIMITS
 from app.core.auth import get_optional_user
@@ -14,6 +16,7 @@ from app.agents.orchestrator import OrchestratorAgent
 from app.models.subscriber import Subscriber
 from app.models.user import User
 from app.models.scan_history import ScanHistory
+from app.models.feedback import Feedback
 
 router = APIRouter()
 
@@ -145,3 +148,34 @@ async def scan_usage(
     resolved_email = user.email if user else email
     tier = _get_tier(resolved_email, db)
     return get_scan_info(ip, tier=tier, email=resolved_email)
+
+
+class FeedbackRequest(BaseModel):
+    rating: str  # helpful, not_helpful, suggestion
+    comment: Optional[str] = None
+    product_name: Optional[str] = None
+    overall_safety: Optional[str] = None
+
+
+@router.post("/feedback")
+async def submit_feedback(
+    body: FeedbackRequest,
+    raw_request: Request,
+    db: Session = Depends(get_db),
+    user: Optional[User] = Depends(get_optional_user),
+):
+    """Submit feedback on a scan result."""
+    if body.rating not in ("helpful", "not_helpful", "suggestion"):
+        raise HTTPException(status_code=400, detail="Invalid rating")
+
+    feedback = Feedback(
+        rating=body.rating,
+        comment=body.comment[:1000] if body.comment else None,
+        product_name=body.product_name[:255] if body.product_name else None,
+        overall_safety=body.overall_safety,
+        user_id=user.id if user else None,
+        ip_address=_get_client_ip(raw_request),
+    )
+    db.add(feedback)
+    db.commit()
+    return {"status": "ok"}

@@ -30,6 +30,7 @@ class FlaggedIngredient(BaseModel):
     name: str
     safety_level: SafetyLevel
     category: Optional[str] = None
+    description: Optional[str] = None
     why_flagged: Optional[str] = None
     safe_alternatives: Optional[str] = None
     confidence: Optional[float] = Field(default=1.0, ge=0.0, le=1.0)
@@ -47,8 +48,10 @@ class ScanResponse(BaseModel):
     verdict_message: str
     flagged_ingredients: List[FlaggedIngredient] = Field(default_factory=list)
     total_ingredients_analyzed: int
+    safe_ingredients: List[FlaggedIngredient] = Field(default_factory=list)
     product_name: Optional[str] = None
     product_brand: Optional[str] = None
+    product_image_url: Optional[str] = None
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
     classification_version: str = "v1.0"
 
